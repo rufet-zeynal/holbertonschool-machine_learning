@@ -6,5 +6,5 @@ def from_numpy(array):
 Fuction creating df from np.ndarray
 """
     df = pd.DataFrame(array)
-    df.columns = [chr(65+1) for i in range(df.shape[1])]
+    df.columns = [chr(65+i) for i in range(df.shape[1])]
     return df
