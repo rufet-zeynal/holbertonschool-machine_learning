@@ -9,4 +9,3 @@ df = pd.DataFrame(
       },
     index = ['A', 'B', 'C', 'D']
 )
-
