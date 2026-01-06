@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import pandas as pd
 
-
 def from_numpy(array):
-    """
-    Converting a numpy.ndarray into a pandas.DataFrame
-    """
-    # Your code here
+"""
+Fuction creating df from np.ndarray
+"""
+    df = pd.DataFrame(array)
+    df.columns = [chr(65+1) for i in range(df.shape[1])]
     return df
