@@ -2,7 +2,6 @@
 """
 First line
 """
-import pandas as pd
 
 
 def slice(df):
