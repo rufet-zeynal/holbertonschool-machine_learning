@@ -8,5 +8,5 @@ def slice(df):
     """
     Selecting every 60th raw
     """
-    df = df[['High', 'Low', 'Close', 'Volume_BTC']]
+    df = df[['High', 'Low', 'Close', 'Volume_(BTC)']]
     return df.iloc[::60]
