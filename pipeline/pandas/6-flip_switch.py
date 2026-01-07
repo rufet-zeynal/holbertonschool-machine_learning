@@ -6,7 +6,7 @@ First line
 
 def flip_switch(df):
     """
-    Sorting data in reverse order
+    Sorting data in reverse order.
     """
     df = df.sort_values(ascending=False)
     transposed_df=df.T
