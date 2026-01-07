@@ -8,5 +8,5 @@ def index(df):
     """
     Setting Timestamp as index of dataframe
     """
-    df['Timestamp'] = df.index
+    df = df.set_index("Timestamp")
     return df
