@@ -3,6 +3,7 @@
 First line
 """
 
+
 def array(df):
     """
     10 rows of High and Close columns
