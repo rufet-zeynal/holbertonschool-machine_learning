@@ -8,6 +8,6 @@ def flip_switch(df):
     """
     Sorting data in reverse order.
     """
-    df = df.sort_values(ascending=False)
+    df = df.sort_values(by= 'Timestamp', ascending=False)
     transposed_df=df.T
     return transposed_df
