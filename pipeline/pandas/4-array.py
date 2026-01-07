@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Importing pandas library
-"""
-import pandas as pd
 
 
 def array(df):
