@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Python plotting
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 
