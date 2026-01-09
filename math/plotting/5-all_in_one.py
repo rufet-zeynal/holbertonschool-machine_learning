@@ -36,7 +36,9 @@ def all_in_one():
 # Line graph1
     plt.subplot(3, 2, 1)
     plt.plot(y0, 'r-')
-    plt.grid(True)
+    plt.xticks(range(0, 11, 2))
+    plt.yticks(range(0, 1001, 500))
+    plt.grid(False)
 
 # Scatter plot
     plt.subplot(3, 2, 2)
@@ -61,12 +63,12 @@ def all_in_one():
     plt.xlabel('Time (years)', fontsize="x-small")
     plt.ylabel('Fraction Remaining', fontsize="x-small")
     plt.title('Exponential Decay of Radioactive Elements', fontsize="x-small")
-    plt.yscale('log')
     plt.xlim(0, 20000)
-    plt.legend(['C-14', 'Ra-226'])
+    plt.yticks(np.arange(0, 1.1, 0.5))
+    plt.legend(['C-14', 'Ra-226'], fontsize="x-small")
 
 # Histogram
-    plt.subplot(3, 2, 5)
+    plt.subplot(3, 2, (5, 6))
     plt.hist(student_grades, bins=range(0, 101, 10), facecolor='blue',
              edgecolor='black', align='mid')
     plt.xlabel('Grades', fontsize="x-small")
@@ -75,7 +77,11 @@ def all_in_one():
     plt.xlim([0, 100])
     plt.ylim([0, 30])
     plt.xticks(range(0, 101, 10))
+    plt.yticks(range(0, 31, 10))
 
 # All in one
     plt.suptitle('All in One')
+    plt.tight_layout()
     plt.show()
+if __name__ == '__main__':
+    all_in_one()
