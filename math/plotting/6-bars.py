@@ -11,7 +11,7 @@ def bars():
     Bar chart plotting
     """
     np.random.seed(5)
-    fruit = np.random.randint(0,20,(4,3))
+    fruit = np.random.randint(0, 20, (4,3))
     plt.figure(figsize=(6.4, 4.8))
     fruit_name = ['apples', 'bananas', 'oranges', 'peaches']
     names = ['Farrah', 'Fred', 'Felicia']
