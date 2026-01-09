@@ -83,5 +83,3 @@ def all_in_one():
     plt.suptitle('All in One')
     plt.tight_layout()
     plt.show()
-if __name__ == '__main__':
-    all_in_one()
