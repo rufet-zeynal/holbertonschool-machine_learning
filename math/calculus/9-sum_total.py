@@ -3,6 +3,7 @@
 Math task
 """
 
+
 def summation_i_squared(n):
     """
     Sum of square numbers
