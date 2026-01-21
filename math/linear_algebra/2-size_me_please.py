@@ -6,10 +6,10 @@ def matrix_shape(matrix):
     """
     Matrix shaping
     """
-    matrix_shape = []
+    matshape = []
     while isinstance(matrix, list):
-        matrix_shape.append(len(matrix))
+        matshape.append(len(matrix))
         if len(matrix) == 0:
             break
         matrix = matrix[0]
-    return matrix_shape
+    return matshape
