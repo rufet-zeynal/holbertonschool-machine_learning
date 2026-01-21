@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Shape
+"""
+
 def matrix_shape(matrix):
     """
     Matrix shaping
