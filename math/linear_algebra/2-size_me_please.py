@@ -9,3 +9,4 @@ def matrix_shape(matrix):
         if len(matrix) == 0:
             break
         matrix = matrix[0]
+    return matrix_shape
