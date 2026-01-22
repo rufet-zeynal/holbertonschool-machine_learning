@@ -8,7 +8,7 @@ def cat_matrices2D(mat1, mat2, axis=0):
     """
     Concatenating two matrices along a specific axis
      """
-     if (len(mat1) != len(mat2) or len(mat1[0]) != len(mat2[0])):
+     if len(mat1) != len(mat2):
          return None
 
      if (len(mat1[0]) == len(mat2[0])) and (axis == 0):
