@@ -8,7 +8,7 @@ def mat_mul(mat1, mat2):
     """
     Matrix multiplication
     """
-    if len(mat1[0] == len(mat2)):
+    if len(mat1[0]) == len(mat2):
             new_matrice =[]
             for row1 in range(len(mat1)):
                 m = []
