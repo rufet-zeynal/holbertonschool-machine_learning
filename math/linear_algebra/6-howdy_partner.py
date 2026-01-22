@@ -2,6 +2,7 @@
 """
 Howdy Partner
 """
+import numoy as np
 
 
 def cat_arrays(arr1, arr2):
