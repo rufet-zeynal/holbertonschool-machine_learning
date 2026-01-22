@@ -16,8 +16,8 @@ def mat_mul(mat1, mat2):
                     value = 0
                     for col1 in range(len(mat1)):
                         value += (mat1[row1][col1] * mat2[row1][col2])
-                        m.append(value)
-                    new_matrice.append(m)
-                return m
+                    m.append(value)
+                new_matrice.append(m)
+            return m
     else:
         return None
