@@ -3,6 +3,7 @@
 Transpose matrix
 """
 
+
 def matrix_transpose(matrix):
     """
     Finding the transpose of the matrix
