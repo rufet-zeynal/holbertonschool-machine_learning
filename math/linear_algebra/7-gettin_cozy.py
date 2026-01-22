@@ -13,6 +13,6 @@ def cat_matrices2D(mat1, mat2, axis=0):
              return (mat1 + mat2)
 
     elif (len(mat1) == len(mat2)) and (axis == 1):
-        return [mat1[i] + mat2[i] for i in range(len(mat1)]
+        return [mat1[i] + mat2[i] for i in range(len(mat1)])
     else:
         return None
