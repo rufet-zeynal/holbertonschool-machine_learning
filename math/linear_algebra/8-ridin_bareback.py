@@ -18,6 +18,6 @@ def mat_mul(mat1, mat2):
                         value += (mat1[row1][col1] * mat2[row1][col2])
                     m.append(value)
                 new_matrice.append(m)
-            return m
+            return new_matrice
     else:
         return None
