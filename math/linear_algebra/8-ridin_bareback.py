@@ -6,20 +6,18 @@ matrix multiplication
 
 def mat_mul(mat1, mat2):
     """
-    Matrix multiplication
+    matrix multiplication
     """
-    if len(mat1[0]) != len(mat2):
+    if len(mat1[0]) == len(mat2):
+        new = []
+        for row1 in range(len(mat1)):
+            inner = []
+            for col2 in range(len(mat2[0])):
+                number = 0
+                for col1 in range(len(mat1[0])):
+                    number += (mat1[row1][col1] * mat2[col1][col2])
+                inner.append(number)
+            new.append(inner)
+        return new
+    else:
         return None
-        
-    new_matrice =[]
-    for row1 in range(len(mat1)):
-         m = []
-         for col2 in range(len(mat2[0])):
-            value = 0
-            for col1 in range(len(mat1)):
-                value += (mat1[row1][col1] * mat2[row1][col2])
-            m.append(value)
-         new_matrice.append(m)
-     return new_matrice
-else:
-    return None
