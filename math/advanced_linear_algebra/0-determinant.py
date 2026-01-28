@@ -8,7 +8,8 @@ def determinant(mat):
     """
     Calculation of determinant of a matrix
     """
-    if not isinstance(mat, list) or any(not isinstance(row, list) for row in mat):
+    if not isinstance(mat, list) or any(not isinstance(row, list)
+        for row in mat):
         raise TypeError("matrix must be a list of lists")
     if mat == [[]]:
         return 1
