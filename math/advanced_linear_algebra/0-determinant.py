@@ -20,4 +20,4 @@ def determinant(mat):
     if x == 2:
         return mat[0][0] * mat[1][1] - mat[1][0] * mat[0][1]
 
-    return sum((-1)**k * mat[0][k] * determinant([row[:k] + row[k+1:] for row in mat[1:]]) for k in range(x)))
+    return sum((-1)**k * mat[0][k] * determinant([row[:k] + row[k+1:] for row in mat[1:]]) for k in range(x))
