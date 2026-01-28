@@ -10,7 +10,7 @@ def determinant(mat):
     """
     if not isinstance(mat, list) or any(not isinstance(row, list) for row in mat):
         raise TypeError("matrix must be a list of lists")
-    if mat == [[]]
+    if mat == [[]]:
         return 1
     x = len(mat)
     if any(len(row) != x for row in mat):
