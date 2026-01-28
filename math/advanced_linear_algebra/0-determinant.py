@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Determinant  of a matrix
+Determinant of a matrix
 """
 
 
