@@ -14,7 +14,7 @@ def determinant(mat):
         return 1
     x = len(mat)
     if any(len(row) != x for row in mat):
-        raise TypeError("matrix must be a square matrix")
+        raise ValueError("matrix must be a square matrix")
     if n == 1:
         return mat[0][0]
     if n == 2:
