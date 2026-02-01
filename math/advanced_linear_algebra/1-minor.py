@@ -33,7 +33,7 @@ def minor(matrix):
     """
     Defining the minor of a matrix
     """
-    if not(isinstance(matrix, list) or len(matrix) == 0 or
+    if (not(isinstance(matrix, list)) or len(matrix) == 0 or
            any(isinstance(row, list) for row in matrix)):
         raise TypeError("matrix must be a list of lists")
 
