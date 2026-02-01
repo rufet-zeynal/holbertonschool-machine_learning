@@ -15,6 +15,9 @@ def definiteness(matrix):
         matrix.size == 0:
         return None
 
+    if not np.allclose(matrix, matrix.T):
+        return None
+
     eigenvalues = np.linalg.eigvals(matrix)
     positive = np.all(eigenvalues > 0)
     pos_semi = np.all(eigenvalues >= 0)
@@ -30,7 +33,7 @@ def definiteness(matrix):
     if neg_semi:
         return "Negative semi-definite"
 
-    if (eigenvalues > 0) and (eigenvalues < 0):
+    if any(eigenvalues > 0) and any(eigenvalues < 0):
         return "Indefinite"
 
     return None
