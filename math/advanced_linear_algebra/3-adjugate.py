@@ -30,12 +30,13 @@ def determinant(mat):
         for k in range(x)
     )
 
+
 def adjugate(matrix):
     """
     Adjugate matrix
     """
-    if not isinstance(matrix, list) or any(not isinstance(row, list)
-                                           for row in matrix):
+    if (not isinstance(matrix, list) or
+            any(not isinstance(row, list) for row in matrix)):
         raise TypeError("matrix must be a list of lists")
 
     x = len(matrix)
@@ -52,6 +53,6 @@ def adjugate(matrix):
                        (matrix[:i] + matrix[i + 1:])]
 
             sign = (-1) ** (i + j)
-            cofactor_value =sign * determinant(sub_mat)
+            cofactor_value = sign * determinant(sub_mat)
             adjugate_matrix[j][i] = cofactor_value
     return adjugate_matrix
