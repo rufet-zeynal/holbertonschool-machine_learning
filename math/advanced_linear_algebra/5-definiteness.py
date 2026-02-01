@@ -22,7 +22,7 @@ def definiteness(matrix):
     positive = np.all(eigenvalues > 0)
     pos_semi = np.all(eigenvalues >= 0)
     negative = np.all(eigenvalues < 0)
-    neg_semi = np.all(eigenvalues <=0)
+    neg_semi = np.all(eigenvalues <= 0)
 
     if positive:
         return "Positive definite"
