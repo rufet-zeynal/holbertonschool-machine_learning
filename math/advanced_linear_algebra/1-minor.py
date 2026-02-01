@@ -33,14 +33,16 @@ def minor(matrix):
     """
     Defining the minor of a matrix
     """
-    if not(isinstance(matrix, list) or
+    if not(isinstance(matrix, list) or len(matrix) == 0 or
            any(isinstance(row, list) for row in matrix)):
         raise TypeError("matrix must be a list of lists")
-    if matrix == [[]]:
-        return 1
+
     x = len(matrix)
     if any(len(row) != x for row in matrix) or len(matrix) == 0:
         raise ValueError("matrix must be a square matrix")
+    if matrix == [[]]:
+        return 1
+
     minor_matrix = []
     for i in range(x):
         minor_row = []
