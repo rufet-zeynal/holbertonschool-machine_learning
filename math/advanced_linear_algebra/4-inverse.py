@@ -76,5 +76,6 @@ def inverse(matrix):
     if x == 1:
         return [[1 / matrix[0][0]]]
 
-    inverse_matrix = [[value / det for value in row] for row in adjugate(matrix)]
+    inverse_matrix = [[value / det for value in row]
+                      for row in adjugate(matrix)]
     return inverse_matrix
