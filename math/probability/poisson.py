@@ -2,7 +2,6 @@
 """
 Poisson distribution
 """
-import numpy as np
 
 
 class Poisson:
