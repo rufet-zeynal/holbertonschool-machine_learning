@@ -30,8 +30,11 @@ class Poisson:
         """
         Probability mass function
         """
-        if not isinstance(k, int):
+        try:
             k = int(k)
+        except Exception:
+            return 0
+
         if k < 0:
             return 0
 
