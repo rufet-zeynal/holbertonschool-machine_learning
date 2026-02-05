@@ -26,3 +26,15 @@ class Exponential:
 
             average = sum(data) / len(data)
             self.lambtha = 1 / average
+
+    def pdf(self, x):
+        """
+        pdf function
+        """
+        x = float(x)
+
+        if x < 0:
+            return 0
+
+        e = 2.7182818285
+        return (self.lambtha * pow(e, -self.lambtha * x))
