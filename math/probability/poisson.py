@@ -44,3 +44,21 @@ class Poisson:
 
         e = 2.7182818285
         return (pow(e, -self.lambtha) * pow(self.lambtha, k) / factorial)
+
+    def cdf(self, k):
+        """
+        Cumulative distribution function
+        """
+        try:
+            k = int(k)
+        except Exception:
+            return 0
+
+        if k < 0:
+            return 0
+
+        cdf = 0
+        for i in range(1, k + 1):
+            cdf += i
+
+        return cdf
