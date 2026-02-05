@@ -36,4 +36,9 @@ class Poisson:
         if k < 0:
             return 0
 
-        return (math.exp(-self.lambtha )* self.lambtha**k / math.factorial(k))
+        factorial = 1
+        for i in range(1, k + 1):
+            factorial *= i
+
+        e = 2.718281828459045
+        return (math.exp(-self.lambtha )* self.lambtha**k /factorial)
