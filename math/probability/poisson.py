@@ -40,4 +40,4 @@ class Poisson:
             factorial *= i
 
         e = 2.718281828459045
-        return (math.exp(-self.lambtha )* self.lambtha**k /factorial)
+        return (e ** (-self.lambtha ) * (self.lambtha ** k) /factorial)
