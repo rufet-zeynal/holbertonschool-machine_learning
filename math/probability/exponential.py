@@ -24,5 +24,5 @@ class Exponential:
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
 
-        average = sum(data) / len(data)
-        self.lambtha = 1 / average
+            average = sum(data) / len(data)
+            self.lambtha = 1 / average
