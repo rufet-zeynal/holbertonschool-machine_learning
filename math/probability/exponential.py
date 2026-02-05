@@ -38,3 +38,15 @@ class Exponential:
 
         e = 2.7182818285
         return (self.lambtha * pow(e, -self.lambtha * x))
+
+    def cdf(self, x):
+        """
+        cdf function
+        """
+        x = float(x)
+
+        if x < 0:
+            return 0
+
+        e = 2.7182818285
+        return (1 - pow(e, -self.lambtha * x))
