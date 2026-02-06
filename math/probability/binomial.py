@@ -62,3 +62,14 @@ class Binomial:
 
         b = pow(self.p, k) * pow(1 - self.p, self.n - k)
         return a * b
+
+    def cdf(self, k):
+        """
+        cdf function
+        """
+        k = int(k)
+        if k < 0 or k > self.n:
+            return 0
+
+        c_d_f = sum(self.pmf(k))
+        return c_d_f
