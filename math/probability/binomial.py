@@ -58,7 +58,7 @@ class Binomial:
         n_fact = self.factorial(self.n)
         k_fact = self.factorial(k)
         n_k_fact = self.factorial(self.n - k)
-        a = n_k_fact / (k_fact * n_k_fact)
+        a = n_fact / (k_fact * n_k_fact)
 
         b = pow(self.p, k) * pow(1 - self.p, self.n - k)
         return a * b
