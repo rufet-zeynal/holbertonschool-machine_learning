@@ -57,7 +57,7 @@ class Normal:
         """
         e = 2.7182818285
         x = float(x)
-        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
+        value = (x - self.mean) / (self.stddev * (2 ** 0.5))
 
         t = 1 / (1 + 0.3275911 * abs(z))
         erf = 1 - (
@@ -66,7 +66,7 @@ class Normal:
                 1.421413741 * t ** 3 -
                 1.453152027 * t ** 4 +
                 1.061405429 * t ** 5
-        ) * pow(e, -z ** 2)
+        ) * pow(e, -value ** 2)
 
         if z < 0:
             erf = -erf
