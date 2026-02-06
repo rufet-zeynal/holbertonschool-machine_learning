@@ -68,8 +68,9 @@ class Normal:
         erf function
         """
         pi = 3.1415926536
-        summation = sum((pow(-1, n) * pow(x, (2 * n + 1)) / (self.factorial(n) *
-                    (2 * n + 1)) for n in range(5)))
+        summation = sum((pow(-1, n) * pow(x, (2 * n + 1)) /
+                         (self.factorial(n) *
+                          (2 * n + 1)) for n in range(5)))
         erf = (2 / (pi ** 0.5)) * summation
         return erf
 
