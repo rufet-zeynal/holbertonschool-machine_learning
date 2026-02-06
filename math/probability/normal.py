@@ -51,6 +51,15 @@ class Normal:
         b = pow(e, (-(x - self.mean) ** 2) / (2 * (self.stddev ** 2)))
         return a * b
 
+
+    def cdf(self, x):
+        """
+        cdf function
+        """
+        erf = (x - self.mean) / (self.stddev * (2 ** 0.5))
+        cdf = 0.5 * (1 + (self.erf(erf)))
+        return cdf
+
     def factorial(self, x):
         """
         factorial function
@@ -72,12 +81,3 @@ class Normal:
                     (2 * n + 1)) for n in range(5)))
         erf = (2 / (pi ** 0.5)) * summation
         return erf
-
-
-    def cdf(self, x):
-        """
-        cdf function
-        """
-        erf = (x - self.mean) / (self.stddev * (2 ** 0.5))
-        cdf = 0.5 * (1 + (self.erf(erf)))
-        return cdf
