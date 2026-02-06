@@ -56,19 +56,18 @@ class Normal:
         cdf function
         """
         e = 2.7182818285
-        x = float(x)
-        value = (x - self.mean) / (self.stddev * (2 ** 0.5))
+        y = (x - self.mean) / (self.stddev * (2 ** 0.5))
 
-        t = 1 / (1 + 0.3275911 * abs(value))
+        t = 1 / (1 + 0.3275911 * abs(y))
         erf = 1 - (
                 0.254829592 * t -
                 0.284496736 * t ** 2 +
                 1.421413741 * t ** 3 -
                 1.453152027 * t ** 4 +
                 1.061405429 * t ** 5
-        ) * pow(e, -value ** 2)
+        ) * pow(e, -(y ** 2))
 
-        if value < 0:
+        if y < 0:
             erf = -erf
 
         return 0.5 * (1 + erf)
