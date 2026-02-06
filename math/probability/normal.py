@@ -39,3 +39,14 @@ class Normal:
         x value function
         """
         return (z * self.stddev) + self.mean
+
+    def pdf(self, x):
+        """
+        pdf function
+        """
+        pi = 3.1415926536
+        e = 2.7182818285
+
+        a = (1 / (self.stddev * (2 * pi) ** 0.5))
+        b = pow(e, (-(x - self.mean) ** 2) / (2 * (self.stddev ** 2)))
+        return a * b
