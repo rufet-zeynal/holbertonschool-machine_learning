@@ -71,5 +71,7 @@ class Binomial:
         if k < 0 or k > self.n:
             return 0
 
-        c_d_f = sum(self.pmf(k))
+        c_d_f = 0
+        for i in range(1, k + 1):
+            c_d_f += self.pmf(i)
         return c_d_f
