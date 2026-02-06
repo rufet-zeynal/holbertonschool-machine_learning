@@ -72,6 +72,6 @@ class Binomial:
             return 0
 
         c_d_f = 0
-        for i in range(1, k + 1):
+        for i in range(0, k + 1):
             c_d_f += self.pmf(i)
         return c_d_f
