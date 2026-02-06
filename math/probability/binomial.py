@@ -13,12 +13,12 @@ class Binomial:
         Initialization function
         """
         if data is None:
-            if n < 0:
+            if n <= 0:
                 raise ValueError("n must be a positive value")
-            if not (0 < p < 1):
+            if not (0 <= p <= 1):
                 raise ValueError("p must be greater than 0 and less than 1")
-            self.n = n
-            self.p = p
+            self.n = int(n)
+            self.p = float(p)
 
         else:
             if not isinstance(data, list):
@@ -26,8 +26,8 @@ class Binomial:
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
 
-        mean = sum(data) / len(data)
-        variance = sum((x - mean) ** 2 for x in data) / len(data)
+            mean = sum(data) / len(data)
+            variance = sum((x - mean) ** 2 for x in data) / len(data)
 
         p = 1 - (variance / mean)
         n = round(mean / p)
