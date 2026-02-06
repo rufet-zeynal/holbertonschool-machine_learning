@@ -34,3 +34,31 @@ class Binomial:
             p = mean / n
             self.n = n
             self.p = p
+
+    def factorial(self, x):
+        """
+        factorial function
+        """
+        if x == 0:
+            return 1
+
+        fact = 1
+        for i in range(1, x + 1):
+            fact *= i
+        return fact
+
+    def pmf(self, k):
+        """
+        Probability mass function
+        """
+        k = int(k)
+        if k < 0 or k > self.n:
+            return 0
+
+        n_fact = self.factorial(self.n)
+        k_fact = self.factorial(k)
+        n_k_fact = self.factorial(self.n - k)
+        a = n_k_fact / (k_fact * n_k_fact)
+
+        b = pow(self.p, k) * pow(1 - self.p, self.n - k)
+        return a * b
