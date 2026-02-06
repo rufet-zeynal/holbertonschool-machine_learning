@@ -29,7 +29,8 @@ class Binomial:
         mean = sum(data) / len(data)
         variance = sum((x - mean) ** 2 for x in data) / len(data)
 
-        p = 1 - variance / mean
+        p = 1 - (variance / mean)
         n = round(mean / p)
+        p = mean / n
         self.n = n
         self.p = p
