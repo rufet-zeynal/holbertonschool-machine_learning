@@ -3,7 +3,19 @@
 Bayesian Probability Likelihood
 """
 import numpy as np
-from math import comb
+
+
+def factorial(self, x):
+    """
+    factorial function
+    """
+    if x == 0:
+        return 1
+
+    fact = 1
+    for i in range(1, x + 1):
+        fact *= i
+    return fact
 
 def likelihood(x, n, P):
     """
@@ -22,5 +34,5 @@ def likelihood(x, n, P):
     if np.any(P < 0 or P > 1):
         raise ValueError("All values in P must be in the range [0, 1]")
 
-    c = comb(n, x)
+    c = factorial(n) / (factorial(n - x) * factorial(x))
     return c * (P ** x) * ((1 - P) ** (n - x))
