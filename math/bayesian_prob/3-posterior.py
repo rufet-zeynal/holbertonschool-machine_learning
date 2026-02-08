@@ -43,4 +43,5 @@ def posterior(x, n, P, Pr):
 
     c = factorial(n) / (factorial(n - x) * factorial(x))
     intersection = (c * (P ** x) * ((1 - P) ** (n - x))) * Pr
-    return marginal(x, n, P, Pr) / intersection
+    marginal = np.sum(intersection)
+    return intersection / marginal
