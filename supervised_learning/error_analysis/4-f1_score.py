@@ -11,6 +11,7 @@ def f1_score(confusion):
     """
     F1 score
     """
-    sensitivity = sensitivity(confusion)
-    precision = precision(confusion)
-    return 2 * (sensitivity * precision) / (sensitivity + precision)
+    sens = sensitivity(confusion)
+    prec = precision(confusion)
+    f1 = 2 * (sens * prec) / (sens + prec)
+    return f1
