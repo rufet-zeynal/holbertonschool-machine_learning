@@ -2,7 +2,6 @@
 """
 Sensitivity calculation
 """
-import numpy as np
 
 
 def sensitivity(confusion):
