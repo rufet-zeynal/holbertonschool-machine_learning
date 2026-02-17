@@ -2,6 +2,7 @@
 """
 Sensitivity calculation
 """
+import numpy as np
 
 
 def sensitivity(confusion):
@@ -9,7 +10,5 @@ def sensitivity(confusion):
     Sensitivity in a confusion matrix
     """
     true_positive = np.diag(confusion)
-
     actual_positive = np.sum(confusion, axis = 1)
-
     return true_positive / actual_positive
