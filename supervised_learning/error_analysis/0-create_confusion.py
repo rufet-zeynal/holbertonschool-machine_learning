@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Confusion Matrix
+Confusion matrix
 """
 import numpy as np
 
