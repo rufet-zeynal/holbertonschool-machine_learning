@@ -3,23 +3,9 @@
 F1 score
 """
 import numpy as np
+sensitivity = __import__('1-sensitivity').sensitivity
+precision = __import__('2-precision').precision
 
-
-def sensitivity(confusion):
-    """
-    Sensitivity in a confusion matrix
-    """
-    true_positive = np.diag(confusion)
-    actual_positive = np.sum(confusion, axis=1)
-    return (true_positive / actual_positive)
-
-def precision(confusion):
-    """
-    Precision of confusion matrix
-    """
-    true_positive_rate = np.diag(confusion)
-    total_pred_pos = np.sum(confusion, axis=0)
-    return true_positive_rate / total_pred_pos
 
 def f1_score(confusion):
     """
