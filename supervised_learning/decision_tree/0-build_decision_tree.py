@@ -9,7 +9,8 @@ class Node:
     """
     Node class for a node in a decision tree
     """
-    def __init__(self, feature=None, threshold=None, left_child=None, right_child=None, is_root=False, depth=0):
+    def __init__(self, feature=None, threshold=None, left_child=None,
+                 right_child=None, is_root=False, depth=0):
         """
         Function for initialization of node
         """
@@ -44,7 +45,7 @@ class Leaf(Node):
         self.is_leaf = True
         self.depth = depth
 
-    def max_depth_below(self) :
+    def max_depth_below(self):
         """
         Function for max depth node
         """
@@ -72,7 +73,7 @@ class Decision_Tree():
         self.split_criterion = split_criterion
         self.predict = None
 
-    def depth(self) :
+    def depth(self):
         """
         Function for depth node
         """
