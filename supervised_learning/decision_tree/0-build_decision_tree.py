@@ -22,7 +22,7 @@ class Node:
         self.sub_population = None
         self.depth = depth
 
-    def max_depth_below(self) :
+    def max_depth_below(self):
         """
         Function for max depth node
         """
@@ -50,11 +50,13 @@ class Leaf(Node):
         """
         return self.depth
 
+
 class Decision_Tree():
     """
     Decision Tree class for a decision tree
     """
-    def __init__(self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None):
+    def __init__(self, max_depth=10, min_pop=1,
+                 seed=0, split_criterion="random", root=None):
         """
         Function for initialization of decision tree
         """
