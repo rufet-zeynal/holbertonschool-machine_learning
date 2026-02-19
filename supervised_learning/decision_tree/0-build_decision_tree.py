@@ -3,6 +3,9 @@
 import numpy as np
 
 class Node:
+    """
+    Node class for a node in a decision tree
+    """
     def __init__(self, feature=None, threshold=None, left_child=None, right_child=None, is_root=False, depth=0):
         self.feature = feature
         self.threshold = threshold
@@ -18,7 +21,11 @@ class Node:
         right_depth = self.right_child.max_depth_below()
         return max(left_depth, right_depth)
 
+
 class Leaf(Node):
+    """
+    Leaf class for a node in a decision tree
+    """
     def __init__(self, value, depth=None):
         super().__init__()
         self.value = value
@@ -29,6 +36,9 @@ class Leaf(Node):
         return self.depth
 
 class Decision_Tree():
+    """
+    Decision Tree class for a decision tree
+    """
     def __init__(self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None):
         self.rng = np.random.default_rng(seed)
         if root:
