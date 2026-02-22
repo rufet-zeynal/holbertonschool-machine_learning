@@ -5,6 +5,7 @@ import numpy as np
 
 class Node:
     """Represents an internal decision node."""
+
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
         """Initializes a Node."""
@@ -111,6 +112,7 @@ class Node:
 
 class Leaf(Node):
     """Represents a terminal leaf node."""
+
     def __init__(self, value, depth=None):
         """Initializes a Leaf node."""
         super().__init__()
@@ -131,7 +133,7 @@ class Leaf(Node):
         return [self]
 
     def update_bounds_below(self):
-        """Pass since leaves have no children to update."""
+        """Pass since leaves have no children."""
         pass
 
     def pred(self, x):
@@ -145,6 +147,7 @@ class Leaf(Node):
 
 class Decision_Tree():
     """Main Decision Tree class."""
+
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
         """Initializes the tree."""
@@ -173,7 +176,7 @@ class Decision_Tree():
         return self.root.get_leaves_below()
 
     def update_bounds(self):
-        """Starts recursive bound update from the root."""
+        """Starts recursive bound update from root."""
         self.root.update_bounds_below()
 
     def update_predict(self):
@@ -190,5 +193,5 @@ class Decision_Tree():
         return self.root.pred(x)
 
     def __str__(self):
-        """Returns string representation of the tree."""
+        """Returns string representation of tree."""
         return self.root.__str__()
