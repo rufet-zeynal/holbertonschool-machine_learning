@@ -28,12 +28,16 @@ class Node:
         return max(left_depth, right_depth)
 
     def count_nodes_below(self, only_leaves=False):
-        """Counts nodes or leaves in the subtree."""
+        """
+        Counts the number of nodes below this node.
+        """
         left_count = self.left_child.count_nodes_below(only_leaves=only_leaves)
         right_count = self.right_child.count_nodes_below(only_leaves=only_leaves)
+
         if only_leaves:
             return left_count + right_count
-        return 1 + left_count + right_count
+        else:
+            return 1 + left_count + right_count
 
 
 class Leaf(Node):
