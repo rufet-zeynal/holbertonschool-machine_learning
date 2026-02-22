@@ -34,7 +34,9 @@ class Node:
             return 1
         l_count = self.left_child.count_nodes_below(only_leaves=only_leaves)
         r_count = self.right_child.count_nodes_below(only_leaves=only_leaves)
-        return (l_count + r_count) if only_leaves else (1 + l_count + r_count)
+        if only_leaves:
+            return l_count + r_count
+        return 1 + l_count + r_count
 
     def get_leaves_below(self):
         """Returns a list of all leaves in the subtree."""
@@ -61,7 +63,6 @@ class Node:
 
     def update_indicator(self):
         """Computes the indicator function for the node."""
-
         def is_large_enough(x):
             return np.all(np.array([np.greater(x[:, k], self.lower[k])
                                     for k in self.lower.keys()]), axis=0)
@@ -81,35 +82,6 @@ class Node:
         if x[self.feature] > self.threshold:
             return self.left_child.pred(x)
         return self.right_child.pred(x)
-
-    def __str__(self):
-        """String representation."""
-        if self.is_leaf:
-            return "-> leaf [value={}]".format(self.value)
-        base = "root" if self.is_root else "node"
-        out = "{} [feature={}, threshold={}]\n".format(
-            base, self.feature, self.threshold)
-        out += self.left_child_add_prefix(self.left_child.__str__())
-        out += self.right_child_add_prefix(self.right_child.__str__())
-        return out
-
-    def left_child_add_prefix(self, text):
-        """Formatting helper."""
-        lines = text.split("\n")
-        new_text = "    +---> " + lines[0] + "\n"
-        for x in lines[1:]:
-            if x:
-                new_text += ("    |  " + x) + "\n"
-        return new_text
-
-    def right_child_add_prefix(self, text):
-        """Formatting helper."""
-        lines = text.split("\n")
-        new_text = "    +---> " + lines[0] + "\n"
-        for x in lines[1:]:
-            if x:
-                new_text += ("       " + x) + "\n"
-        return new_text
 
 
 class Leaf(Node):
@@ -148,11 +120,8 @@ class Decision_Tree():
     def get_leaves(self):
         return self.root.get_leaves_below()
 
-    def update_bounds(self):
-        self.root.update_bounds_below()
-
     def update_predict(self):
-        self.update_bounds()
+        self.root.update_bounds_below()
         leaves = self.get_leaves()
         for leaf in leaves:
             leaf.update_indicator()
@@ -173,11 +142,9 @@ class Decision_Tree():
         threshold = (1 - x) * f_min + x * f_max
         return feat, threshold
 
-    def fit(self, explanatory, target, verbose=0):
+    def fit(self, explanatory, target):
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
-        else:
-            self.split_criterion = self.Gini_split_criterion
         self.explanatory = explanatory
         self.target = target
         self.root.sub_population = np.ones_like(self.target, dtype='bool')
@@ -233,9 +200,6 @@ class Random_Forest():
 
     def __init__(self, n_trees=100, max_depth=10, min_pop=1,
                  seed=0, split_criterion="random"):
-        self.numpy_predicts = []
-        self.target = None
-        self.numpy_preds = None
         self.n_trees = n_trees
         self.max_depth = max_depth
         self.min_pop = min_pop
@@ -246,14 +210,14 @@ class Random_Forest():
 
     def fit(self, explanatory, target, verbose=0):
         """Fits the forest by training multiple trees on bagged data."""
-        self.target = target
-        self.explanatory = explanatory
-        for i in range(self.n_trees):
+        for _ in range(self.n_trees):
             # Bagging: Sample with replacement
             indices = self.rng.integers(0, target.size, target.size)
+            # Create a new seed for each tree from the forest's RNG
+            tree_seed = self.rng.integers(0, 2**32)
             T = Decision_Tree(max_depth=self.max_depth,
                               min_pop=self.min_pop,
-                              seed=self.seed + i,
+                              seed=tree_seed,
                               split_criterion=self.split_criterion)
             T.fit(explanatory[indices], target[indices])
             self.trees.append(T)
@@ -273,13 +237,10 @@ class Random_Forest():
 
     def predict(self, explanatory):
         """Predicts by taking the majority vote of all trees."""
-        # Get predictions from all trees: shape (n_trees, n_individuals)
         all_preds = np.array([t.predict(explanatory) for t in self.trees])
-
-        # Majority vote across axis 0 (trees)
-        def majority(column):
-            return np.argmax(np.bincount(column.astype('int32')))
-
+        # Majority vote across trees
+        def majority(col):
+            return np.argmax(np.bincount(col.astype('int32')))
         return np.apply_along_axis(majority, axis=0, arr=all_preds)
 
     def accuracy(self, test_explanatory, test_target):
