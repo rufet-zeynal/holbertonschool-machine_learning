@@ -20,11 +20,9 @@ class Random_Forest():
     def predict(self, explanatory):
         """Predicts the most frequent class among all trees."""
         # Generate predictions for each tree: shape (n_trees, n_individuals)
-        # self.numpy_preds contains the .predict function for each tree
         all_preds = np.array([p(explanatory) for p in self.numpy_preds])
 
         # Calculate the mode (most frequent) prediction for each example
-        # We use axis=0 to find the most common value across trees for each individual
         def get_mode(column):
             """Helper to find the most frequent value in a 1D array."""
             counts = np.bincount(column.astype('int32'))
@@ -55,6 +53,7 @@ class Random_Forest():
             accuracies.append(T.accuracy(T.explanatory, T.target))
 
         if verbose == 1:
+            # The two spaces before 'Training' are crucial for stdout length
             print("  Training finished.")
             print("    - Mean depth                     : {}".format(
                 np.array(depths).mean()))
