@@ -225,27 +225,28 @@ class Decision_Tree():
         """Recursively trains a node by splitting."""
         node.feature, node.threshold = self.split_criterion(node)
 
-        # Vectorized split logic
+        # Correct splitting logic: Left > threshold, Right <= threshold
         mask_left = self.explanatory[:, node.feature] > node.threshold
         left_pop = np.logical_and(node.sub_population, mask_left)
         right_pop = np.logical_and(node.sub_population, ~mask_left)
 
         def is_leaf(pop, depth):
-            """Determines if a node should stop splitting."""
+            """Internal helper to determine leaf status."""
             if not np.any(pop) or depth >= self.max_depth:
                 return True
             if np.sum(pop) < self.min_pop:
                 return True
+            # Population is pure (only one class)
             return np.unique(self.target[pop]).size == 1
 
-        # Left Child logic
+        # Left Child
         if is_leaf(left_pop, node.depth + 1):
             node.left_child = self.get_leaf_child(node, left_pop)
         else:
             node.left_child = self.get_node_child(node, left_pop)
             self.fit_node(node.left_child)
 
-        # Right Child logic
+        # Right Child
         if is_leaf(right_pop, node.depth + 1):
             node.right_child = self.get_leaf_child(node, right_pop)
         else:
@@ -253,9 +254,8 @@ class Decision_Tree():
             self.fit_node(node.right_child)
 
     def get_leaf_child(self, node, sub_population):
-        """Creates a leaf with the majority vote value."""
+        """Creates a leaf with majority voting."""
         target_subset = self.target[sub_population]
-        # Most frequent class
         value = np.argmax(np.bincount(target_subset))
         leaf_child = Leaf(value)
         leaf_child.depth = node.depth + 1
@@ -263,13 +263,13 @@ class Decision_Tree():
         return leaf_child
 
     def get_node_child(self, node, sub_population):
-        """Creates an internal node."""
+        """Creates a node child for recursion."""
         n = Node()
         n.depth = node.depth + 1
         n.sub_population = sub_population
         return n
 
     def accuracy(self, test_explanatory, test_target):
-        """Calculates accuracy of predictions on test data."""
+        """Calculates accuracy on test data."""
         return np.sum(np.equal(self.predict(test_explanatory),
                                test_target)) / test_target.size
