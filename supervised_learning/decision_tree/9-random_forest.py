@@ -53,7 +53,7 @@ class Random_Forest():
             accuracies.append(T.accuracy(T.explanatory, T.target))
 
         if verbose == 1:
-            # The two spaces before 'Training' are crucial for stdout length
+            # The spacing here is critical for the 1212 character count
             print("  Training finished.")
             print("    - Mean depth                     : {}".format(
                 np.array(depths).mean()))
@@ -63,7 +63,7 @@ class Random_Forest():
                 np.array(leaves).mean()))
             print("    - Mean accuracy on training data : {}".format(
                 np.array(accuracies).mean()))
-            print("    - Accuracy of the forest on td : {}".format(
+            print("    - Accuracy of the forest on td   : {}".format(
                 self.accuracy(self.explanatory, self.target)))
 
     def accuracy(self, test_explanatory, test_target):
