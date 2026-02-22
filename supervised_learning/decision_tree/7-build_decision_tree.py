@@ -33,12 +33,11 @@ class Node:
         """Counts nodes or leaves in the subtree."""
         if self.is_leaf:
             return 1
-        left_count = self.left_child.count_nodes_below(only_leaves=only_leaves)
-        right_count = self.right_child.count_nodes_below(
-            only_leaves=only_leaves)
+        l_count = self.left_child.count_nodes_below(only_leaves=only_leaves)
+        r_count = self.right_child.count_nodes_below(only_leaves=only_leaves)
         if only_leaves:
-            return left_count + right_count
-        return 1 + left_count + right_count
+            return l_count + r_count
+        return 1 + l_count + r_count
 
     def get_leaves_below(self):
         """Returns a list of all leaves in the subtree."""
@@ -67,13 +66,13 @@ class Node:
         """Computes the indicator function for the node."""
         def is_large_enough(x):
             """Checks if individuals are above lower bounds."""
-            return np.all(np.array([np.greater(x[:, key], self.lower[key])
-                                    for key in self.lower.keys()]), axis=0)
+            return np.all(np.array([np.greater(x[:, k], self.lower[k])
+                                    for k in self.lower.keys()]), axis=0)
 
         def is_small_enough(x):
             """Checks if individuals are below upper bounds."""
-            return np.all(np.array([np.less_equal(x[:, key], self.upper[key])
-                                    for key in self.upper.keys()]), axis=0)
+            return np.all(np.array([np.less_equal(x[:, k], self.upper[k])
+                                    for k in self.upper.keys()]), axis=0)
 
         self.indicator = lambda x: np.all(np.array([is_large_enough(x),
                                                     is_small_enough(x)]),
@@ -211,13 +210,14 @@ class Decision_Tree():
         self.fit_node(self.root)
         self.update_predict()
         if verbose == 1:
-            print(f"  Training finished.")
-            print(f"- Depth                     : {self.depth()}")
-            print(f"- Number of nodes           : {self.count_nodes()}")
-            print(f"- Number of leaves          : "
-                  f"{self.count_nodes(only_leaves=True)}")
-            print(f"- Accuracy on training data : "
-                  f"{self.accuracy(self.explanatory, self.target)}")
+            print("  Training finished.")
+            print("- Depth                     : {}".format(self.depth()))
+            print("- Number of nodes           : {}".format(
+                self.count_nodes()))
+            print("- Number of leaves          : {}".format(
+                self.count_nodes(only_leaves=True)))
+            print("- Accuracy on training data : {}".format(
+                self.accuracy(self.explanatory, self.target)))
 
     def fit_node(self, node):
         """Recursively trains a node."""
