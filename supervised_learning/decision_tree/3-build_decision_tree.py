@@ -91,7 +91,7 @@ class Leaf(Node):
 
     def __str__(self):
         """Returns string representation of the leaf."""
-        return "leaf [value={}]".format(self.value)
+        return "-> leaf [value={}]".format(self.value)
 
 
 class Decision_Tree():
