@@ -222,27 +222,30 @@ class Decision_Tree():
                 self.accuracy(self.explanatory, self.target)))
 
     def fit_node(self, node):
-        """Recursively trains a node."""
+        """Recursively trains a node by splitting."""
         node.feature, node.threshold = self.split_criterion(node)
-        meet_crit = self.explanatory[:, node.feature] > node.threshold
-        left_pop = np.logical_and(node.sub_population, meet_crit)
-        right_pop = np.logical_and(node.sub_population,
-                                   np.logical_not(meet_crit))
+
+        # Vectorized split logic
+        mask_left = self.explanatory[:, node.feature] > node.threshold
+        left_pop = np.logical_and(node.sub_population, mask_left)
+        right_pop = np.logical_and(node.sub_population, ~mask_left)
 
         def is_leaf(pop, depth):
-            """Determines if a node should be a leaf."""
+            """Determines if a node should stop splitting."""
             if not np.any(pop) or depth >= self.max_depth:
                 return True
             if np.sum(pop) < self.min_pop:
                 return True
             return np.unique(self.target[pop]).size == 1
 
+        # Left Child logic
         if is_leaf(left_pop, node.depth + 1):
             node.left_child = self.get_leaf_child(node, left_pop)
         else:
             node.left_child = self.get_node_child(node, left_pop)
             self.fit_node(node.left_child)
 
+        # Right Child logic
         if is_leaf(right_pop, node.depth + 1):
             node.right_child = self.get_leaf_child(node, right_pop)
         else:
@@ -250,8 +253,9 @@ class Decision_Tree():
             self.fit_node(node.right_child)
 
     def get_leaf_child(self, node, sub_population):
-        """Creates a leaf child with the majority class value."""
+        """Creates a leaf with the majority vote value."""
         target_subset = self.target[sub_population]
+        # Most frequent class
         value = np.argmax(np.bincount(target_subset))
         leaf_child = Leaf(value)
         leaf_child.depth = node.depth + 1
@@ -259,7 +263,7 @@ class Decision_Tree():
         return leaf_child
 
     def get_node_child(self, node, sub_population):
-        """Creates a node child for recursive fitting."""
+        """Creates an internal node."""
         n = Node()
         n.depth = node.depth + 1
         n.sub_population = sub_population
