@@ -9,7 +9,8 @@ class Node:
     """
     Represents an internal node in a decision tree.
     """
-    def __init__(self, feature=None, threshold=None, left_child=None,
+    def __init__(self, feature=None, threshold=None,
+                 left_child=None,
                  right_child=None, is_root=False, depth=0):
         """Initializes the node."""
         self.feature = feature
@@ -33,8 +34,10 @@ class Node:
         """
         Counts the number of nodes below this node.
         """
-        left_count = self.left_child.count_nodes_below(only_leaves=only_leaves)
-        right_count = self.right_child.count_nodes_below(only_leaves=only_leaves)
+        left_count =\
+            self.left_child.count_nodes_below(only_leaves=only_leaves)
+        right_count =\
+            self.right_child.count_nodes_below(only_leaves=only_leaves)
 
         if only_leaves:
             return left_count + right_count
