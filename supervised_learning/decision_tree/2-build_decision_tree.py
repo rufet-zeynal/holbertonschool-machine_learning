@@ -25,8 +25,10 @@ class Node:
 
     def count_nodes_below(self, only_leaves=False):
         """Counts nodes or leaves in the subtree."""
-        left_count = self.left_child.count_nodes_below(only_leaves=only_leaves)
-        right_count = self.right_child.count_nodes_below(only_leaves=only_leaves)
+        left_count = (
+            self.left_child.count_nodes_below(only_leaves=only_leaves))
+        right_count = (
+            self.right_child.count_nodes_below(only_leaves=only_leaves))
         if only_leaves:
             return left_count + right_count
         return 1 + left_count + right_count
@@ -107,9 +109,13 @@ class Decision_Tree():
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
-        """Returns count of nodes or leaves."""
+        """
+        Returns count of nodes or leaves.
+        """
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
-        """Returns string representation of the tree."""
+        """
+        Returns string representation of the tree.
+        """
         return self.root.__str__()
