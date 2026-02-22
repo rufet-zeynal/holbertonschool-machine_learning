@@ -203,11 +203,14 @@ class Decision_Tree():
             self.split_criterion = self.random_split_criterion
         else:
             self.split_criterion = self.Gini_split_criterion
+
         self.explanatory = explanatory
         self.target = target
         self.root.sub_population = np.ones_like(self.target, dtype='bool')
+
         self.fit_node(self.root)
         self.update_predict()
+
         if verbose == 1:
             print("  Training finished.")
             print("- Depth                     : {}".format(self.depth()))
@@ -227,6 +230,7 @@ class Decision_Tree():
                                    np.logical_not(meet_crit))
 
         def is_leaf(pop, depth):
+            """Determines if a node should be a leaf."""
             if not np.any(pop) or depth >= self.max_depth:
                 return True
             if np.sum(pop) < self.min_pop:
@@ -265,7 +269,3 @@ class Decision_Tree():
         """Calculates accuracy of predictions on test data."""
         return np.sum(np.equal(self.predict(test_explanatory),
                                test_target)) / test_target.size
-
-    def __str__(self):
-        """Returns string representation of the tree."""
-        return self.root.__str__()
