@@ -14,7 +14,7 @@ class Neuron:
         Class constructor for the Neuron.
         nx (int): The number of input features to the neuron.
         """
-        if type(nx) != int:
+        if type(nx) is not int:
             raise TypeError('nx must be an integer')
         if nx < 1:
             raise ValueError('nx must be a positive integer')
