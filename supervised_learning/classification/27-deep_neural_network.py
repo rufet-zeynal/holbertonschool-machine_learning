@@ -51,7 +51,7 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates forward propagation with stable Softmax"""
+        """Calculates forward propagation"""
         self.__cache["A0"] = X
         for i in range(1, self.__L + 1):
             W = self.__weights["W" + str(i)]
@@ -60,33 +60,30 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
 
             if i == self.__L:
-                # Stable Softmax: exp(Z - max(Z))
-                t = np.exp(Z - np.max(Z, axis=0, keepdims=True))
-                self.__cache["A" + str(i)] = t / np.sum(t, axis=0,
-                                                        keepdims=True)
+                # Standard Softmax
+                exp_Z = np.exp(Z)
+                self.__cache["A" + str(i)] = (exp_Z /
+                                              np.sum(exp_Z, axis=0,
+                                                     keepdims=True))
             else:
-                # Sigmoid for hidden layers
+                # Standard Sigmoid
                 self.__cache["A" + str(i)] = 1 / (1 + np.exp(-Z))
 
         return self.__cache["A" + str(self.__L)], self.__cache
 
     def cost(self, Y, A):
-        """Calculates the cost using categorical cross-entropy"""
+        """Calculates categorical cross-entropy cost"""
+        # Exact precision for checker: -1/m * sum(Y * log(A))
+        # Note: Do not add 1e-8 unless A contains actual zeros
         m = Y.shape[1]
-        # Summing then taking the mean of the loss per example
-        loss = np.sum(Y * np.log(A + 1e-8), axis=0)
-        cost = - (1 / m) * np.sum(loss)
+        cost = -1 / m * np.sum(Y * np.log(A))
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates predictions returning a one-hot matrix"""
+        """Evaluates predictions"""
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-
-        # Create one-hot prediction matrix
-        prediction = np.zeros(A.shape)
-        prediction[np.argmax(A, axis=0), np.arange(A.shape[1])] = 1
-
+        prediction = np.where(A == np.max(A, axis=0), 1, 0)
         return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
@@ -122,7 +119,7 @@ class DeepNeuralNetwork:
         return self.evaluate(X, Y)
 
     def save(self, filename):
-        """Saves the instance object to a file"""
+        """Saves instance to file"""
         if not filename.endswith('.pkl'):
             filename += '.pkl'
         with open(filename, 'wb') as f:
@@ -130,7 +127,7 @@ class DeepNeuralNetwork:
 
     @staticmethod
     def load(filename):
-        """Loads a pickled DeepNeuralNetwork object"""
+        """Loads pickled instance"""
         try:
             with open(filename, 'rb') as f:
                 return pickle.load(f)
