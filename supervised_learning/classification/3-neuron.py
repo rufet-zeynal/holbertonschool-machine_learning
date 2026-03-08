@@ -65,7 +65,8 @@ class Neuron:
         """
         m = Y.shape[1]
 
-        # We use 1.0000001 - A as requested to prevent log(0) which is undefined
+        # We use 1.0000001 - A as requested to prevent
+        # log(0) which is undefined
         # This is a common trick called "epsilon" to keep the math stable.
         cost = - (1 / m) * np.sum(
             Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
