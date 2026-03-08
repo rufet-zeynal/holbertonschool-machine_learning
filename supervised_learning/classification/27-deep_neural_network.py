@@ -73,7 +73,7 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using categorical cross-entropy"""
         m = Y.shape[1]
-        # Using 1e-8 to avoid log(0)
+        # Categorical cross-entropy formula
         cost = - (1 / m) * np.sum(Y * np.log(A + 1e-8))
         return cost
 
@@ -82,17 +82,14 @@ class DeepNeuralNetwork:
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
 
-        # Identify index of max probability per example
-        max_indices = np.argmax(A, axis=0)
-        # Create one-hot prediction matrix
+        # Create one-hot prediction matrix based on max probability
         prediction = np.zeros(A.shape)
-        prediction[max_indices, np.arange(A.shape[1])] = 1
+        prediction[np.argmax(A, axis=0), np.arange(A.shape[1])] = 1
 
         return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates gradient descent.
-        Note: dZ for Softmax + Cross-Entropy is still (A - Y)"""
+        """Calculates gradient descent"""
         m = Y.shape[1]
         dz = cache["A" + str(self.__L)] - Y
 
@@ -134,7 +131,7 @@ class DeepNeuralNetwork:
         return self.evaluate(X, Y)
 
     def save(self, filename):
-        """Saves the instance object to a file in pickle format"""
+        """Saves the instance object to a file"""
         if not filename.endswith('.pkl'):
             filename += '.pkl'
         with open(filename, 'wb') as f:
