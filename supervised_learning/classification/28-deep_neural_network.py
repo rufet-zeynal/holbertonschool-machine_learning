@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module defining a deep neural network with multiple activations"""
+"""Module for a Deep Neural Network with selectable activations"""
 import numpy as np
 import pickle
 
@@ -68,12 +68,13 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
 
             if i == self.__L:
-                # Softmax for multiclass output
-                t = np.exp(Z)
-                self.__cache["A" + str(i)] = t / np.sum(t, axis=0,
-                                                        keepdims=True)
+                # Multiclass output layer: Softmax
+                exp_Z = np.exp(Z)
+                self.__cache["A" + str(i)] = (exp_Z /
+                                              np.sum(exp_Z, axis=0,
+                                                     keepdims=True))
             else:
-                # Hidden layer activations
+                # Hidden layers: use __activation
                 if self.__activation == 'sig':
                     self.__cache["A" + str(i)] = 1 / (1 + np.exp(-Z))
                 else:
@@ -84,20 +85,23 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates categorical cross-entropy cost"""
         m = Y.shape[1]
-        cost = - (1 / m) * np.sum(Y * np.log(A + 1e-8))
+        # Raw cross-entropy for decimal precision matching
+        cost = -1 / m * np.sum(Y * np.log(A))
         return cost
 
     def evaluate(self, X, Y):
         """Evaluates predictions returning a one-hot matrix"""
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        max_indices = np.argmax(A, axis=0)
+
+        # Create one-hot matrix based on argmax
         prediction = np.zeros(A.shape)
-        prediction[max_indices, np.arange(A.shape[1])] = 1
+        prediction[np.argmax(A, axis=0), np.arange(A.shape[1])] = 1
+
         return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates gradient descent using dynamic derivatives"""
+        """Calculates gradient descent based on __activation"""
         m = Y.shape[1]
         dz = cache["A" + str(self.__L)] - Y
 
@@ -110,7 +114,7 @@ class DeepNeuralNetwork:
             db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
 
             if i > 1:
-                # Derivatives depend on the activation used
+                # Backward step depends on hidden layer activation
                 if self.__activation == 'sig':
                     dz = np.dot(W.T, dz) * (A_prev * (1 - A_prev))
                 else:
@@ -143,7 +147,7 @@ class DeepNeuralNetwork:
         return self.evaluate(X, Y)
 
     def save(self, filename):
-        """Saves the instance object to a file"""
+        """Saves instance to file"""
         if not filename.endswith('.pkl'):
             filename += '.pkl'
         with open(filename, 'wb') as f:
@@ -151,7 +155,7 @@ class DeepNeuralNetwork:
 
     @staticmethod
     def load(filename):
-        """Loads a pickled DeepNeuralNetwork object"""
+        """Loads pickled instance"""
         try:
             with open(filename, 'rb') as f:
                 return pickle.load(f)
