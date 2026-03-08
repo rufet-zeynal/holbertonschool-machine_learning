@@ -29,16 +29,15 @@ class DeepNeuralNetwork:
             w_key = "W" + str(i + 1)
             b_key = "b" + str(i + 1)
 
+            # Simplified logic to avoid E128 indentation errors
             if i == 0:
-                # Use parentheses to avoid E128 errors
-                self.__weights[w_key] = (np.random.randn(layers[i], nx) *
-                                         np.sqrt(2 / nx))
+                prev_nodes = nx
             else:
-                # Align the second line with the opening parenthesis
-                self.__weights[w_key] = (np.random.randn(layers[i],
-                                                        layers[i-1]) *
-                                         np.sqrt(2 / layers[i-1]))
+                prev_nodes = layers[i - 1]
 
+            rescale = np.sqrt(2 / prev_nodes)
+            self.__weights[w_key] = np.random.randn(layers[i],
+                                                   prev_nodes) * rescale
             self.__weights[b_key] = np.zeros((layers[i], 1))
 
     @property
