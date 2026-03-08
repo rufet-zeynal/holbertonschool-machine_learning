@@ -6,29 +6,33 @@ import numpy as np
 import pickle
 
 
-def save(self, filename):
+class DeepNeuralNetwork:
     """
-    Saves the instance object to a file in pickle format
-
-    filename: the file to which the object should be saved
+    Defines a deep neural network performing binary classification
     """
-    if not filename.endswith('.pkl'):
-        filename += '.pkl'
 
-    with open(filename, 'wb') as file:
-        pickle.dump(self, file)
+    def __init__(self, nx, layers):
+        # ... (all your code from task 23 goes here) ...
+        pass
 
+    # ... (all your properties, forward_prop, cost, etc.) ...
 
-@staticmethod
-def load(filename):
-    """
-    Loads a pickled DeepNeuralNetwork object
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+        # ... (your train method from task 23) ...
+        pass
 
-    filename: the file from which the object should be loaded
-    Returns: the loaded object, or None if filename doesn't exist
-    """
-    try:
-        with open(filename, 'rb') as file:
-            return pickle.load(file)
-    except FileNotFoundError:
-        return None
+    def save(self, filename):
+        """Saves the instance object to a file in pickle format"""
+        if not filename.endswith('.pkl'):
+            filename += '.pkl'
+        with open(filename, 'wb') as file:
+            pickle.dump(self, file)
+
+    @staticmethod
+    def load(filename):
+        """Loads a pickled DeepNeuralNetwork object"""
+        try:
+            with open(filename, 'rb') as file:
+                return pickle.load(file)
+        except FileNotFoundError:
+            return None
