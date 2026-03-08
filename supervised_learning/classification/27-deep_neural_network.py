@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module defining a deep neural network for multiclass classification"""
+"""Module for a Deep Neural Network performing multiclass classification"""
 import numpy as np
 import pickle
 
@@ -28,11 +28,7 @@ class DeepNeuralNetwork:
 
             w_key = "W" + str(i + 1)
             b_key = "b" + str(i + 1)
-
-            if i == 0:
-                prev_nodes = nx
-            else:
-                prev_nodes = layers[i - 1]
+            prev_nodes = nx if i == 0 else layers[i - 1]
 
             rescale = np.sqrt(2 / prev_nodes)
             self.__weights[w_key] = (np.random.randn(layers[i], prev_nodes) *
@@ -55,7 +51,7 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates forward propagation with Softmax at output layer"""
+        """Calculates forward propagation with Softmax at the output layer"""
         self.__cache["A0"] = X
         for i in range(1, self.__L + 1):
             W = self.__weights["W" + str(i)]
@@ -64,12 +60,12 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
 
             if i == self.__L:
-                # Softmax Activation: exp(Zi) / sum(exp(Z))
+                # Softmax for the output layer
                 t = np.exp(Z)
-                self.__cache["A" + str(i)] = (t / np.sum(t, axis=0,
-                                                        keepdims=True))
+                self.__cache["A" + str(i)] = t / np.sum(t, axis=0,
+                                                        keepdims=True)
             else:
-                # Sigmoid Activation for hidden layers
+                # Sigmoid for hidden layers
                 self.__cache["A" + str(i)] = 1 / (1 + np.exp(-Z))
 
         return self.__cache["A" + str(self.__L)], self.__cache
@@ -77,8 +73,7 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using categorical cross-entropy"""
         m = Y.shape[1]
-        # Categorical cross-entropy: -(1/m) * sum(Y * log(A))
-        # 1e-8 prevents log(0) which causes NaN errors
+        # Using 1e-8 to avoid log(0)
         cost = - (1 / m) * np.sum(Y * np.log(A + 1e-8))
         return cost
 
@@ -87,17 +82,17 @@ class DeepNeuralNetwork:
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
 
-        # Convert softmax probabilities to one-hot prediction
-        # argmax finds the index of the highest probability
+        # Identify index of max probability per example
         max_indices = np.argmax(A, axis=0)
+        # Create one-hot prediction matrix
         prediction = np.zeros(A.shape)
-        # Set the winning class to 1, others stay 0
         prediction[max_indices, np.arange(A.shape[1])] = 1
 
         return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates one pass of gradient descent"""
+        """Calculates gradient descent.
+        Note: dZ for Softmax + Cross-Entropy is still (A - Y)"""
         m = Y.shape[1]
         dz = cache["A" + str(self.__L)] - Y
 
@@ -109,6 +104,7 @@ class DeepNeuralNetwork:
             db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
 
             if i > 1:
+                # Derivative of Sigmoid for hidden layers
                 dz = np.dot(W.T, dz) * (A_prev * (1 - A_prev))
 
             self.__weights["W" + str(i)] -= alpha * dw
