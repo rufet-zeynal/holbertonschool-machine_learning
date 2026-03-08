@@ -21,7 +21,7 @@ class Neuron:
         self.__b = 0
         self.__A = 0
 
-    # Getter for weights
+    # Getter -> weights
     @property
     def W(self):
         """
@@ -29,7 +29,7 @@ class Neuron:
         """
         return self.__W
 
-    # Getter for bias
+    # Getter -> bias
     @property
     def b(self):
         """
@@ -37,7 +37,7 @@ class Neuron:
         """
         return self.__b
 
-    # Getter for activation
+    # Getter -> activation
     @property
     def A(self):
         """
