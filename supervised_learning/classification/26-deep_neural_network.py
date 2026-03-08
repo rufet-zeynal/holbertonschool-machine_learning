@@ -30,12 +30,14 @@ class DeepNeuralNetwork:
             b_key = "b" + str(i + 1)
 
             if i == 0:
-                self.__weights[w_key] = np.random.randn(layers[i], nx) * \
-                    np.sqrt(2 / nx)
+                # Fixed indentation here
+                self.__weights[w_key] = (np.random.randn(layers[i], nx) *
+                                         np.sqrt(2 / nx))
             else:
-                self.__weights[w_key] = np.random.randn(layers[i],
-                                                       layers[i-1]) * \
-                    np.sqrt(2 / layers[i-1])
+                # Fixed indentation here
+                self.__weights[w_key] = (np.random.randn(layers[i],
+                                                        layers[i-1]) *
+                                         np.sqrt(2 / layers[i-1]))
 
             self.__weights[b_key] = np.zeros((layers[i], 1))
 
@@ -69,7 +71,6 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using logistic regression"""
         m = Y.shape[1]
-        # Broken into two lines to stay under 79 characters
         term1 = Y * np.log(A)
         term2 = (1 - Y) * np.log(1.0000001 - A)
         cost = -1/m * np.sum(term1 + term2)
@@ -118,7 +119,6 @@ class DeepNeuralNetwork:
                 self.gradient_descent(Y, self.__cache, alpha)
 
             if verbose and (i % step == 0 or i == iterations):
-                # Wrapped the print statement and the cost call
                 c = self.cost(Y, A)
                 print("Cost after {} iterations: {}".format(i, c))
 
