@@ -55,7 +55,7 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates forward propagation with Softmax at the output layer"""
+        """Calculates forward propagation with Softmax at output layer"""
         self.__cache["A0"] = X
         for i in range(1, self.__L + 1):
             W = self.__weights["W" + str(i)]
@@ -64,12 +64,12 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
 
             if i == self.__L:
-                # Softmax Activation for multiclass
+                # Softmax Activation
                 t = np.exp(Z)
-                self.__cache["A" + str(i)] = t / np.sum(t, axis=0,
-                                                        keepdims=True)
+                self.__cache["A" + str(i)] = (t / np.sum(t, axis=0,
+                                                         keepdims=True))
             else:
-                # Sigmoid Activation for hidden layers
+                # Sigmoid Activation
                 self.__cache["A" + str(i)] = 1 / (1 + np.exp(-Z))
 
         return self.__cache["A" + str(self.__L)], self.__cache
@@ -77,19 +77,23 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using categorical cross-entropy"""
         m = Y.shape[1]
-        # Categorical cross-entropy formula
-        loss = -np.sum(Y * np.log(A + 1e-8))
-        cost = (1 / m) * loss
+        # Categorical cross-entropy formula with epsilon to avoid log(0)
+        cost = - (1 / m) * np.sum(Y * np.log(A + 1e-8))
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates predictions by finding the max probability index"""
+        """Evaluates predictions returning a one-hot matrix"""
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        # Convert probabilities to one-hot prediction matrix
-        max_prob = np.amax(A, axis=0)
-        prediction = np.where(A == max_prob, 1, 0)
-        return prediction, cost
+
+        # Identify the index of the highest probability
+        max_indices = np.argmax(A, axis=0)
+        # Create a one-hot matrix of the same shape as A
+        prediction = np.zeros(A.shape)
+        # Fill the max indices with 1
+        prediction[max_indices, np.arange(A.shape[1])] = 1
+
+        return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """Calculates one pass of gradient descent"""
