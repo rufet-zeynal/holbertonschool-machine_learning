@@ -20,34 +20,37 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
-        for i in range(self.L):
+        for i in range(self.__L):
             if type(layers[i]) is not int or layers[i] <= 0:
-                raise TypeError("layers must be a list of positive integers")
+                err = "layers must be a list of positive integers"
+                raise TypeError(err)
 
             w_key = "W" + str(i + 1)
             b_key = "b" + str(i + 1)
 
             if i == 0:
-                # He-et-al initialization (using randn to match checker)
                 self.__weights[w_key] = np.random.randn(layers[i], nx) * \
-                                        np.sqrt(2 / nx)
+                    np.sqrt(2 / nx)
             else:
                 self.__weights[w_key] = np.random.randn(layers[i],
-                                                        layers[i - 1]) * \
-                                        np.sqrt(2 / layers[i - 1])
+                                                       layers[i-1]) * \
+                    np.sqrt(2 / layers[i-1])
 
             self.__weights[b_key] = np.zeros((layers[i], 1))
 
     @property
     def L(self):
+        """Getter for L"""
         return self.__L
 
     @property
     def cache(self):
+        """Getter for cache"""
         return self.__cache
 
     @property
     def weights(self):
+        """Getter for weights"""
         return self.__weights
 
     def forward_prop(self, X):
@@ -59,14 +62,13 @@ class DeepNeuralNetwork:
             A_prev = self.__cache["A" + str(i - 1)]
 
             Z = np.dot(W, A_prev) + b
-            # Sigmoid activation
             self.__cache["A" + str(i)] = 1 / (1 + np.exp(-Z))
         return self.__cache["A" + str(self.__L)], self.__cache
 
     def cost(self, Y, A):
         """Calculates the cost using logistic regression"""
         m = Y.shape[1]
-        cost = -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        cost = -1/m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
         return cost
 
     def evaluate(self, X, Y):
@@ -88,11 +90,9 @@ class DeepNeuralNetwork:
             dw = (1 / m) * np.dot(dz, A_prev.T)
             db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
 
-            # Backpropagate the error
             if i > 1:
                 dz = np.dot(W.T, dz) * (A_prev * (1 - A_prev))
 
-            # Update weights
             self.__weights["W" + str(i)] -= alpha * dw
             self.__weights["b" + str(i)] -= alpha * db
 
@@ -114,7 +114,8 @@ class DeepNeuralNetwork:
                 self.gradient_descent(Y, self.__cache, alpha)
 
             if verbose and (i % step == 0 or i == iterations):
-                print("Cost after {} iterations: {}".format(i, self.cost(Y, A)))
+                print("Cost after {} iterations: {}".format(i,
+                                                            self.cost(Y, A)))
 
         return self.evaluate(X, Y)
 
