@@ -52,7 +52,7 @@ class Neuron:
         # Z = W * X + b
         # Activation -> sigmoid(Z) = 1/(1+e^-Z)
         # W -> (1,nx), X -> (1, m) so WX = (1, m)
-        Z = np.matmul(X, self.__W) + self.__b
+        Z = np.matmul(self.__W, X) + self.__b
         # Sigmoid function
         self.__A = 1 / (1 + np.exp(-Z))
         return self.__A
