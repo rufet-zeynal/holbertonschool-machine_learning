@@ -30,11 +30,11 @@ class DeepNeuralNetwork:
             b_key = "b" + str(i + 1)
 
             if i == 0:
-                # Fixed indentation here
+                # Use parentheses to avoid E128 errors
                 self.__weights[w_key] = (np.random.randn(layers[i], nx) *
                                          np.sqrt(2 / nx))
             else:
-                # Fixed indentation here
+                # Align the second line with the opening parenthesis
                 self.__weights[w_key] = (np.random.randn(layers[i],
                                                         layers[i-1]) *
                                          np.sqrt(2 / layers[i-1]))
@@ -71,9 +71,9 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using logistic regression"""
         m = Y.shape[1]
-        term1 = Y * np.log(A)
-        term2 = (1 - Y) * np.log(1.0000001 - A)
-        cost = -1/m * np.sum(term1 + term2)
+        t1 = Y * np.log(A)
+        t2 = (1 - Y) * np.log(1.0000001 - A)
+        cost = -1/m * np.sum(t1 + t2)
         return cost
 
     def evaluate(self, X, Y):
