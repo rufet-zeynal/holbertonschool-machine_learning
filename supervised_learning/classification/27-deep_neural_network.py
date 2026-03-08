@@ -64,12 +64,12 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
 
             if i == self.__L:
-                # Softmax Activation
+                # Softmax Activation: exp(Zi) / sum(exp(Z))
                 t = np.exp(Z)
                 self.__cache["A" + str(i)] = (t / np.sum(t, axis=0,
-                                                         keepdims=True))
+                                                        keepdims=True))
             else:
-                # Sigmoid Activation
+                # Sigmoid Activation for hidden layers
                 self.__cache["A" + str(i)] = 1 / (1 + np.exp(-Z))
 
         return self.__cache["A" + str(self.__L)], self.__cache
@@ -77,7 +77,8 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using categorical cross-entropy"""
         m = Y.shape[1]
-        # Categorical cross-entropy formula with epsilon to avoid log(0)
+        # Categorical cross-entropy: -(1/m) * sum(Y * log(A))
+        # 1e-8 prevents log(0) which causes NaN errors
         cost = - (1 / m) * np.sum(Y * np.log(A + 1e-8))
         return cost
 
@@ -86,11 +87,11 @@ class DeepNeuralNetwork:
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
 
-        # Identify the index of the highest probability
+        # Convert softmax probabilities to one-hot prediction
+        # argmax finds the index of the highest probability
         max_indices = np.argmax(A, axis=0)
-        # Create a one-hot matrix of the same shape as A
         prediction = np.zeros(A.shape)
-        # Fill the max indices with 1
+        # Set the winning class to 1, others stay 0
         prediction[max_indices, np.arange(A.shape[1])] = 1
 
         return prediction.astype(int), cost
