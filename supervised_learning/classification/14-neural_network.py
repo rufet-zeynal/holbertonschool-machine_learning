@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module defining a neural network with one hidden layer
-performing binary classification
+performing binary classification.
 """
 import numpy as np
 
@@ -11,6 +11,7 @@ class NeuralNetwork:
     Defines a neural network with one hidden layer
     performing binary classification.
     """
+
     def __init__(self, nx, nodes):
         """Constructor for NeuralNetwork"""
         if type(nx) is not int:
@@ -114,12 +115,13 @@ class NeuralNetwork:
             raise TypeError("iterations must be an integer")
         if iterations <= 0:
             raise ValueError("iterations must be a positive integer")
+
         if type(alpha) is not float:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
 
-        for _ in range(iterations):
+        for i in range(iterations):
             A1, A2 = self.forward_prop(X)
             self.gradient_descent(X, Y, A1, A2, alpha)
 
