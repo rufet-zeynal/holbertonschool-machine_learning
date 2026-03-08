@@ -59,7 +59,7 @@ class DeepNeuralNetwork:
         return self.__activation
 
     def forward_prop(self, X):
-        """Calculates forward propagation with dynamic activation"""
+        """Calculates forward propagation"""
         self.__cache["A0"] = X
         for i in range(1, self.__L + 1):
             W = self.__weights["W" + str(i)]
@@ -68,10 +68,12 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
 
             if i == self.__L:
+                # Softmax for multiclass output
                 t = np.exp(Z)
-                self.__cache["A" + str(i)] = (t / np.sum(t, axis=0,
-                                                        keepdims=True))
+                self.__cache["A" + str(i)] = t / np.sum(t, axis=0,
+                                                        keepdims=True)
             else:
+                # Hidden layer activations
                 if self.__activation == 'sig':
                     self.__cache["A" + str(i)] = 1 / (1 + np.exp(-Z))
                 else:
@@ -95,7 +97,7 @@ class DeepNeuralNetwork:
         return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates gradient descent using dynamic activation derivatives"""
+        """Calculates gradient descent using dynamic derivatives"""
         m = Y.shape[1]
         dz = cache["A" + str(self.__L)] - Y
 
@@ -108,6 +110,7 @@ class DeepNeuralNetwork:
             db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
 
             if i > 1:
+                # Derivatives depend on the activation used
                 if self.__activation == 'sig':
                     dz = np.dot(W.T, dz) * (A_prev * (1 - A_prev))
                 else:
@@ -140,7 +143,7 @@ class DeepNeuralNetwork:
         return self.evaluate(X, Y)
 
     def save(self, filename):
-        """Saves the instance object to a file in pickle format"""
+        """Saves the instance object to a file"""
         if not filename.endswith('.pkl'):
             filename += '.pkl'
         with open(filename, 'wb') as f:
