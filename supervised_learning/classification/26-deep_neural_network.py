@@ -14,7 +14,8 @@ class DeepNeuralNetwork:
         if nx < 1:
             raise ValueError("nx must be a positive integer")
         if type(layers) is not list or len(layers) == 0:
-            raise TypeError("layers must be a list of positive integers")
+            err = "layers must be a list of positive integers"
+            raise TypeError(err)
 
         self.__L = len(layers)
         self.__cache = {}
@@ -68,7 +69,10 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using logistic regression"""
         m = Y.shape[1]
-        cost = -1/m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        # Broken into two lines to stay under 79 characters
+        term1 = Y * np.log(A)
+        term2 = (1 - Y) * np.log(1.0000001 - A)
+        cost = -1/m * np.sum(term1 + term2)
         return cost
 
     def evaluate(self, X, Y):
@@ -114,8 +118,9 @@ class DeepNeuralNetwork:
                 self.gradient_descent(Y, self.__cache, alpha)
 
             if verbose and (i % step == 0 or i == iterations):
-                print("Cost after {} iterations: {}".format(i,
-                                                            self.cost(Y, A)))
+                # Wrapped the print statement and the cost call
+                c = self.cost(Y, A)
+                print("Cost after {} iterations: {}".format(i, c))
 
         return self.evaluate(X, Y)
 
