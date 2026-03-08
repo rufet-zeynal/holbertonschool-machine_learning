@@ -51,7 +51,7 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates forward propagation with Softmax at the output layer"""
+        """Calculates forward propagation with stable Softmax"""
         self.__cache["A0"] = X
         for i in range(1, self.__L + 1):
             W = self.__weights["W" + str(i)]
@@ -60,8 +60,8 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
 
             if i == self.__L:
-                # Softmax for the output layer
-                t = np.exp(Z)
+                # Stable Softmax: exp(Z - max(Z))
+                t = np.exp(Z - np.max(Z, axis=0, keepdims=True))
                 self.__cache["A" + str(i)] = t / np.sum(t, axis=0,
                                                         keepdims=True)
             else:
@@ -73,8 +73,9 @@ class DeepNeuralNetwork:
     def cost(self, Y, A):
         """Calculates the cost using categorical cross-entropy"""
         m = Y.shape[1]
-        # Categorical cross-entropy formula
-        cost = - (1 / m) * np.sum(Y * np.log(A + 1e-8))
+        # Summing then taking the mean of the loss per example
+        loss = np.sum(Y * np.log(A + 1e-8), axis=0)
+        cost = - (1 / m) * np.sum(loss)
         return cost
 
     def evaluate(self, X, Y):
@@ -82,14 +83,14 @@ class DeepNeuralNetwork:
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
 
-        # Create one-hot prediction matrix based on max probability
+        # Create one-hot prediction matrix
         prediction = np.zeros(A.shape)
         prediction[np.argmax(A, axis=0), np.arange(A.shape[1])] = 1
 
         return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates gradient descent"""
+        """Calculates gradient descent pass"""
         m = Y.shape[1]
         dz = cache["A" + str(self.__L)] - Y
 
@@ -101,7 +102,6 @@ class DeepNeuralNetwork:
             db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
 
             if i > 1:
-                # Derivative of Sigmoid for hidden layers
                 dz = np.dot(W.T, dz) * (A_prev * (1 - A_prev))
 
             self.__weights["W" + str(i)] -= alpha * dw
@@ -110,15 +110,6 @@ class DeepNeuralNetwork:
     def train(self, X, Y, iterations=5000, alpha=0.05,
               verbose=True, graph=True, step=100):
         """Trains the deep neural network"""
-        if type(iterations) is not int:
-            raise TypeError("iterations must be an integer")
-        if iterations <= 0:
-            raise ValueError("iterations must be a positive integer")
-        if type(alpha) is not float:
-            raise TypeError("alpha must be a float")
-        if alpha <= 0:
-            raise ValueError("alpha must be positive")
-
         for i in range(iterations + 1):
             A, _ = self.forward_prop(X)
             if i != iterations:
