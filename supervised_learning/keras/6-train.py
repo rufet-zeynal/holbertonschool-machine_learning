@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Trains a model with early stopping
+Trains a model with Early Stopping
 """
 import tensorflow.keras as K
 
