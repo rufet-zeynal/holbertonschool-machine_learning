@@ -36,6 +36,7 @@ def train_model(network, data, labels, batch_size, epochs,
         batch_size=batch_size,
         epochs=epochs,
         validation_data=validation_data,
+        callbacks=callbacks,
         verbose=verbose,
         shuffle=shuffle
     )
