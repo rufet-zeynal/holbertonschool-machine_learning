@@ -11,7 +11,7 @@ def train_model(network, data, labels, batch_size, epochs,
                 alpha=0.1, decay_rate=1, save_best=False,
                 filepath=None, verbose=True, shuffle=False):
     """
-    Training a model and saveing the best iteration
+    Training a model and saving the best iteration
 
     network             - the Keras model to train
     data                - input data, shape (m, nx)
