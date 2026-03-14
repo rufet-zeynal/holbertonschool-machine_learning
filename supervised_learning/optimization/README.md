@@ -1,1 +1,1 @@
-Deep Learning - Optimization
+Deep Learning - Optimization Methods
