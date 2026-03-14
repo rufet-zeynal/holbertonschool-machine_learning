@@ -9,6 +9,6 @@ def normalization_constants(X):
     """
     Calculation of normalization constants
     """
-    mean = np.mean(X)
-    std = np.std(X)
+    mean = np.mean(X, axis=0)
+    std = np.std(X, axis=0)
     return mean, std
