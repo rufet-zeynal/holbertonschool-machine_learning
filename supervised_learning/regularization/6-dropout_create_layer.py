@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Defines `dropout_create_layer`."""
-import tensorflow.compat.v1 as tf
-
+import tensorflow as tf
 
 def dropout_create_layer(prev, n, activation, keep_prob):
     """
