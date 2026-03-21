@@ -10,28 +10,28 @@ def dropout_forward_prop(X, weights, L, keep_prob):
     L:         number of layers
     keep_prob: probability that a node will be kept
     """
-    cache = {}
-    cache['A0'] = X
-
-    for i in range(1, L + 1):
-        W = weights['W' + str(i)]
-        b = weights['b' + str(i)]
-        A_prev = cache['A' + str(i - 1)]
-
-        # linear step
-        Z = np.matmul(W, A_prev) + b
-
-        if i == L:
-            # last layer → softmax
-            e_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
-            A = e_Z / np.sum(e_Z, axis=0, keepdims=True)
-        else:
-            # hidden layers → tanh + dropout
+    cache = {'A0': X}
+    # Previous layer activation:
+    A = X
+    for layer in range(1, L + 1):
+        # Weights:
+        W = weights["W{}".format(layer)]
+        # Bias:
+        b = weights["b{}".format(layer)]
+        # Linear transformation:
+        Z = W @ A + b
+        if layer < L:
+            # Activation:
             A = np.tanh(Z)
-            mask = np.random.binomial(1, keep_prob, size=A.shape) / keep_prob
-            A = A * mask
-            cache['D' + str(i)] = mask
-
-        cache['A' + str(i)] = A
+            # Dropout mask:
+            D = np.random.rand(*A.shape) < keep_prob
+            D = np.where(D, 1, 0)
+            cache['D{}'.format(layer)] = D
+            # Apply dropout mask:
+            A *= D / keep_prob
+        else:
+            # No dropout on final layer; softmax activation:
+            A = np.exp(Z) / np.sum(np.exp(Z), axis=0)
+        cache['A{}'.format(layer)] = A
 
     return cache
