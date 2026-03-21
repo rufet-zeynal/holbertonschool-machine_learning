@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Defines `dropout_create_layer`."""
-import tensorflow as tf
+import tensorflow.keras as tf
 
 def dropout_create_layer(prev, n, activation, keep_prob):
     """
