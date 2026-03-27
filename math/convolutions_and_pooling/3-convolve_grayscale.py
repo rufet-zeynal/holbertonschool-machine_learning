@@ -1,50 +1,42 @@
 #!/usr/bin/env python3
-"""Strided convolution with all padding options"""
+"""Convolution with custom padding on grayscale images"""
 import numpy as np
 
 
-def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
+def convolve_grayscale_padding(images, kernel, padding):
     """
-    Performs convolution with stride and any padding type
+    Performs convolution with custom padding
 
     images  - (m, h, w)
     kernel  - (kh, kw)
-    padding - 'same', 'valid', or (ph, pw)
-    stride  - (sh, sw)
+    padding - (ph, pw)
 
     Returns: convolved images
     """
     m, h, w = images.shape
     kh, kw = kernel.shape
-    sh, sw = stride
+    ph, pw = padding
 
-    # calculate padding based on type
-    if padding == 'same':
-        ph = max((kh - 1) // 2, kh // 2)
-        pw = max((kw - 1) // 2, kw // 2)
-    elif padding == 'valid':
-        ph, pw = 0, 0
-    else:
-        ph, pw = padding
+    # pad images with zeros
+    padded = np.pad(
+        images,
+        ((0, 0), (ph, ph), (pw, pw)),
+        mode='constant',
+        constant_values=0
+    )
 
-    # pad images
-    padded = np.pad(images,
-                    ((0, 0), (ph, ph), (pw, pw)),
-                    mode='constant')
-
-    # output size with stride
-    # floor division because stride can skip positions
-    out_h = (h + 2*ph - kh) // sh + 1
-    out_w = (w + 2*pw - kw) // sw + 1
+    # output size after padding
+    # padded image is (h + 2*ph) × (w + 2*pw)
+    # then apply valid convolution on padded image
+    out_h = h + 2 * ph - kh + 1
+    out_w = w + 2 * pw - kw + 1
 
     output = np.zeros((m, out_h, out_w))
 
-    # loop over output positions
-    # i and j are output indices
-    # multiply by stride to get input position
     for i in range(out_h):
         for j in range(out_w):
-            region = padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw]
+            region = padded[:, i:i+kh, j:j+kw]
             output[:, i, j] = np.sum(region * kernel, axis=(1, 2))
 
     return output
+
