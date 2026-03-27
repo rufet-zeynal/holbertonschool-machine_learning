@@ -13,7 +13,7 @@ def convolve_grayscale_same(images, kernel):
     Returns: convolved images same size as input
     """
     m, h, w = images.shape
-    kh, kw  = kernel.shape
+    kh, kw = kernel.shape
 
     # padding needed to keep output same size as input
     # for odd kernels: pad = (kernel-1)/2
