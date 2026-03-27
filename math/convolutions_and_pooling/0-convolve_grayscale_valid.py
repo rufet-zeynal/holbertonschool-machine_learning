@@ -12,8 +12,8 @@ def convolve_grayscale_valid(images, kernel):
 
     Returns: convolved images
     """
-    m, h, w    = images.shape
-    kh, kw     = kernel.shape
+    m, h, w = images.shape
+    kh, kw = kernel.shape
 
     # output size: valid means no padding
     # each dimension shrinks by (kernel_size - 1)
