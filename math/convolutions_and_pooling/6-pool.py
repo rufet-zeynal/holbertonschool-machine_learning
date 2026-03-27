@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-'''Convolution with Channels'''
+'''Pooling'''
 
 import numpy as np
 
 
-def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
-    '''performs a valid convolution on grayscale images
+def pool(images, kernel_shape, stride, mode='max'):
+    '''performs pooling on images
     Args:
         images:array shape (m, h, w, c) containing multiple grayscale images
             m is the number of images
             h is the height in pixels of the images
             w is the width in pixels of the images
             c is the number of channels in the image
-        kernel: array with shape (kh, kw, c) containing the kernel
+        kernel_shape: is a tuple of (kh, kw) containing the kernel
             kh is the height of the kernel
             kw is the width of the kernel
         padding is a tuple of (ph, pw) ‘same’, or ‘valid’
@@ -25,45 +25,37 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
         stride is a tuple of (sh, sw)
             sh is the stride for the height of the image
             sw is the stride for the width of the image
+        mode indicates the type of pooling
+            max indicates max pooling
+            avg indicates average pooling
         Return : a numpy.ndarray containing the convolved images
     '''
     m = images.shape[0]
     h = images.shape[1]
     w = images.shape[2]
-    c = kernel.shape[2]
-    kh = kernel.shape[0]
-    kw = kernel.shape[1]
+    c = images.shape[3]
+    kh = kernel_shape[0]
+    kw = kernel_shape[1]
     sh = stride[0]
     sw = stride[1]
-    # # calculate padding according to type
-    if type(padding) is tuple:
-        # padding
-        padh = padding[0]
-        padw = padding[1]
-    elif padding == 'same':
-        padh = int((((h - 1) * sh - h + kh) / 2)) + 1
-        padw = int((((w - 1) * sw - w + kw) / 2)) + 1
-    elif padding == 'valid':
-        padh = padw = 0
-
+    # define type of pooling
+    if mode == 'max':
+        pooling = np.max
+    else:
+        pooling = np.average
+    # with pooling no padding is used
     # new dimensions with stride
-    nh = int(((h + (2 * padh) - kh) / sh)) + 1
-    nw = int(((w + (2 * padw) - kw) / sw)) + 1
-    # output
-    conv = np.zeros((m, nh, nw))
-    # pad images add dimension at the for channels
-    pad = ((0, 0), (padh, padh), (padw, padw), (0, 0))
-    imagepaded = np.pad(images, pad_width=pad, mode='constant',
-                        constant_values=0)
+    nh = int(((h - kh) / sh)) + 1
+    nw = int(((w - kw) / sw)) + 1
+    # output must contain channels
+    conv = np.zeros((m, nh, nw, c))
     # Loop over every pixel of the output
     for i in range(nh):
         for j in range(nw):
             # apply strided
             x = i * sh
             y = j * sw
-            # slice every image according to kernel size
-            # add dimension at the end for channels
-            image = imagepaded[:, x: x+kh, y: y+kw, :]
-            # element-wise multiplication of the kernel and the image
-            conv[:, i, j] = np.multiply(image, kernel).sum(axis=(1, 2, 3))
+            # apply pooling to slice
+            conv[:, i, j, :] = pooling(images[:, x:x+kh, y:y+kw, :],
+                                       axis=(1, 2))
     return conv
