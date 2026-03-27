@@ -11,8 +11,8 @@ def create_RMSProp_op(alpha, beta2, epsilon):
     Sets up the RMSProp optimization algorithm in TensorFlow.
 
     Args:
-        alpha   (float): Learning rate.
-        beta2   (float): RMSProp discounting factor (decay for squared-grad avg).
+        alpha (float): Learning rate.
+        beta2 (float): RMSProp discounting factor
         epsilon (float): Small constant to avoid division by zero.
 
     Returns:
@@ -20,7 +20,7 @@ def create_RMSProp_op(alpha, beta2, epsilon):
     """
     optimizer = tf.keras.optimizers.RMSprop(
         learning_rate=alpha,
-        rho=beta2,          # rho is TF's name for beta2 / discount factor
+        rho=beta2,   # rho is TF's name for beta2 / discount factor
         epsilon=epsilon
     )
     return optimizer
