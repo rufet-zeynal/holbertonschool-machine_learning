@@ -7,29 +7,28 @@ def create_batch_norm_layer(prev, n, activation):
     """
     Creates one layer with batch normalization
 
-    prev       - output of previous layer (tensor)
-    n          - number of neurons in this layer
-    activation - activation function (e.g. tf.nn.relu)
+    prev       - output of previous layer
+    n          - number of neurons
+    activation - activation function
 
     Returns: activated output tensor
     """
-    # Step 1 — Dense layer, no activation
+    # Dense layer — keep default bias (don't set use_bias=False)
     dense = tf.keras.layers.Dense(
         units=n,
-        use_bias=False,    # BatchNorm has its own bias (beta)
         kernel_initializer=tf.keras.initializers.VarianceScaling(
             mode='fan_avg'
         )
     )(prev)
 
-    # Step 2 — Batch normalization
+    # Batch normalization with gamma=1, beta=0
     normed = tf.keras.layers.BatchNormalization(
         gamma_initializer=tf.keras.initializers.Ones(),
         beta_initializer=tf.keras.initializers.Zeros(),
         epsilon=1e-7
-    )(dense)
+    )(dense, training=True)
 
-    # Step 3 — apply activation last
+    # Apply activation last
     output = activation(normed)
 
     return output
