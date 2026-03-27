@@ -23,7 +23,7 @@ def update_variables_RMSProp(alpha, beta2, epsilon, var, grad, s):
         epsilon (float):          Small constant to avoid ÷0 (e.g. 1e-8).
         var     (numpy.ndarray):  Variable to update.
         grad    (numpy.ndarray):  Gradient of the loss w.r.t. var.
-        s       (numpy.ndarray):  Previous second moment (squared-grad average).
+        s  (numpy.ndarray):  Previous second moment (squared-grad average).
 
     Returns:
         tuple: (updated_var, new_s)
