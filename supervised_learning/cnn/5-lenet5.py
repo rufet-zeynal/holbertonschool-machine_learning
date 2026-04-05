@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Defines `lenet5` using Keras."""
+"""Defines lenet5 using Keras."""
 import tensorflow.keras as K
 
 
