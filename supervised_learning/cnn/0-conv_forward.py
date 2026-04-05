@@ -1,61 +1,82 @@
 #!/usr/bin/env python3
-"""Forward propagation over a convolutional layer"""
+"""Defines `conv_forward`"""
 import numpy as np
 
 
 def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
     """
-    Forward propagation over a convolutional layer
+    Performs forward propagation over a convolutional layer of a neural
+    network.
 
-    A_prev     - (m, h_prev, w_prev, c_prev) input
-    W          - (kh, kw, c_prev, c_new) kernels
-    b          - (1, 1, 1, c_new) biases
-    activation - activation function
-    padding    - 'same' or 'valid'
-    stride     - (sh, sw)
+    A_prev: A numpy.ndarray containing the output of the previous layer of
+        shape (m, h_prev, w_prev, c_prev):
+        - m is the number of training examples
+        - h_prev is the height of the previous layer
+        - w_prev is the width of the previous layer
+        - c_prev is the number of channels in the previous layer
+    W: A numpy.ndarray containing the filters for the convolution of shape
+        (fh, fw, c_prev, c_new):
+        - fh is the filter height
+        - fw is the filter width
+        - c_prev is the number of channels in the previous layer
+        - c_new is the number of channels in the output
+    b: A numpy.ndarray containing the biases applied to the convolution of
+        shape (1, 1, 1, c_new).
+    activation: An activation function applied to the convolution.
+    padding: A string that is either "same" or "valid," indicating the type of
+        padding used.
+    stride: A tuple of (sh, sw) containing the strides across the convolution:
+        - sh is the vertical stride
+        - sw is horizontal stride
 
-    Returns: activated output of convolutional layer
+    Returns: The output of the convolutional layer.
     """
-    m, h_prev, w_prev, c_prev = A_prev.shape
-    kh, kw, _, c_new          = W.shape
-    sh, sw                    = stride
+    training_example_count, input_height, input_width, input_depth = \
+        A_prev.shape
+    # filter_depth must equal input_depth and filter_count equals output_depth
+    filter_height, filter_width, filter_depth, filter_count = W.shape
+    vertical_stride, horizontal_stride = stride
 
-    # calculate padding
-    if padding == 'same':
-        ph = max((kh - 1) // 2, kh // 2)
-        pw = max((kw - 1) // 2, kw // 2)
-    else:
-        ph, pw = 0, 0
+    if padding == 'valid':
+        padding_height = 0
+        padding_width = 0
+    elif padding == 'same':
+        padding_height = int(np.ceil(((input_height - 1) * vertical_stride -
+                                     input_height + filter_height) / 2))
+        padding_width = int(np.ceil(((input_width - 1) * horizontal_stride -
+                                    input_width + filter_width) / 2))
 
-    # pad input
-    A_padded = np.pad(A_prev,
-                      ((0, 0), (ph, ph), (pw, pw), (0, 0)),
-                      mode='constant')
+    cross_correlation_shape = (
+        training_example_count,
+        (input_height + 2 * padding_height - filter_height) // vertical_stride
+        + 1,
+        (input_width + 2 * padding_width - filter_width) // horizontal_stride
+        + 1,
+        filter_count
+    )
 
-    # output dimensions
-    out_h = (h_prev + 2*ph - kh) // sh + 1
-    out_w = (w_prev + 2*pw - kw) // sw + 1
+    padding_shape = (0, padding_height, padding_width, 0)
+    padding_shape = tuple(zip(padding_shape, padding_shape))
+    X = np.pad(A_prev, padding_shape)
+    cross_correlation = np.zeros(cross_correlation_shape)
 
-    # output array
-    Z = np.zeros((m, out_h, out_w, c_new))
+    for cross_correlation_y in range(cross_correlation_shape[1]):
+        for cross_correlation_x in range(cross_correlation_shape[2]):
+            height_offset = cross_correlation_y * vertical_stride
+            width_offset = cross_correlation_x * horizontal_stride
 
-    # convolve — loop over output height and width
-    for i in range(out_h):
-        for j in range(out_w):
-            # extract region from all images at once
-            region = A_padded[:,
-                               i*sh : i*sh+kh,
-                               j*sw : j*sw+kw,
-                               :]
-            # region shape: (m, kh, kw, c_prev)
-            # W shape:      (kh, kw, c_prev, c_new)
-            # for each kernel k: sum(region * W[:,:,:,k])
-            for k in range(c_new):
-                Z[:, i, j, k] = np.sum(
-                    region * W[:, :, :, k],
-                    axis=(1, 2, 3)
-                )
+            window = X[
+                :,
+                height_offset:height_offset + filter_height,
+                width_offset:width_offset + filter_width,
+                :
+            ]
 
-    # add bias and apply activation
-    Z += b
-    return activation(Z)
+            cross_correlation[
+                :,
+                cross_correlation_y,
+                cross_correlation_x,
+                :
+            ] = np.tensordot(window, W, axes=[(1, 2, 3), (0, 1, 2)])
+
+    return activation(cross_correlation + b)
