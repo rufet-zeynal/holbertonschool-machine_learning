@@ -9,4 +9,5 @@ def crop_image(image, size):
     """
     Performs a random crop of an image.
     """
-    return tf.image.random_crop(image, size)
+    image = tf.image.random_crop(image, size)
+    return image
