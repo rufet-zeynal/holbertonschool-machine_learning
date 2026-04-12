@@ -9,6 +9,4 @@ def change_contrast(image, lower, upper):
     """
     Contrast of an image
     """
-    contrasted_image = tf.image.random_contrast(image,
-                        lower, upper)
-    return contrasted_image
+    return tf.image.random_contrast(image, lower, upper)
