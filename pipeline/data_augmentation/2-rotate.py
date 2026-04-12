@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""
-Data Augmentation - Rotation
-"""
+'''rotates an image by 90 degrees'''
 import tensorflow as tf
 
 
 def rotate_image(image):
-    """
-    Rotate an image
-    """
-    rotated_image = tf.image.rot90(image)
-    return rotated_image
+    '''rotates an image by 90 degrees counter-clockwise
+    Args:
+        image is a 3D tf.Tensor containing the image to rotate
+    Returns the rotated image
+    '''
+    rot_90 = tf.image.rot90(image, k=1)
+    return rot_90
