@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Identity block for  ResNet"""
+"""Identity block for ResNet"""
 from tensorflow import keras as K
 
 
