@@ -17,7 +17,7 @@ def projection_block(A_prev, filters, s=2):
     init = K.initializers.HeNormal(seed=0)
 
     # Main path
-    # First component: 1x1 conv with stride s (downsamples)
+    # First component : 1x1 conv with stride s (downsamples)
     X = K.layers.Conv2D(F11, (1, 1), strides=(s, s), padding='same',
                         kernel_initializer=init)(A_prev)
     X = K.layers.BatchNormalization(axis=3)(X)
