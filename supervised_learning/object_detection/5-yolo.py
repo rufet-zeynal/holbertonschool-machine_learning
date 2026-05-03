@@ -165,15 +165,15 @@ class Yolo:
             # Save original (height, width) before any transformation
             image_shapes.append([img.shape[0], img.shape[1]])
 
+            # Convert BGR (cv2 default) to RGB before resizing
+            rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
             # cv2.resize takes (width, height)
             resized = cv2.resize(
-                img,
+                rgb,
                 (input_w, input_h),
                 interpolation=cv2.INTER_CUBIC
             )
-
-            # Convert BGR (cv2 default) to RGB (model expects)
-            resized = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
 
             # Normalize pixels from [0, 255] to [0, 1]
             pimages.append(resized / 255.0)
