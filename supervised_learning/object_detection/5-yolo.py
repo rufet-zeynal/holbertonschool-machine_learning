@@ -158,25 +158,18 @@ class Yolo:
         Resizes the images with inter-cubic interpolation and
         rescales them to have pixel values in the range [0, 1].
         """
-        input_h = int(self.model.input.shape[1])
-        input_w = int(self.model.input.shape[2])
-
         pimages = []
         image_shapes = []
-
+        # new dimensions according to input by the model
+        new_width = self.model.input_shape[1]
+        new_height = self.model.input_shape[2]
         for img in images:
-            image_shapes.append([img.shape[0], img.shape[1]])
-
-            # Rescale FIRST to force OpenCV to interpolate using floating-point
-            # arithmetic. This fixes the checker's precision mismatch.
-            rescaled_img = img / 255.0
-
-            resized_img = cv2.resize(
-                rescaled_img,
-                (input_w, input_h),
-                interpolation=cv2.INTER_CUBIC
-            )
-
-            pimages.append(resized_img)
-
+            # every image is a pixel matrix so you can get it size from shape
+            image_shapes.append((img.shape[0], img.shape[1]))
+            # resize image to new dimensions
+            resize = cv2.resize(img, (new_width, new_height),
+                                interpolation=cv2.INTER_CUBIC)
+            # rescale pixel values between 0-1
+            rescale = resize / 255
+            pimages.append(rescale)
         return (np.array(pimages), np.array(image_shapes))
