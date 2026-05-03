@@ -10,7 +10,8 @@ class Yolo:
     """Performs object detection using the YOLOv3 algorithm."""
 
     def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
-        """Loads the Keras model, class names, and detection parameters."""
+        """Loads the Keras model, class names, and detection parameters.
+        """
         self.model = tf.keras.models.load_model(model_path)
         with open(classes_path, 'r') as f:
             self.class_names = [line.strip() for line in f.readlines()]
@@ -23,7 +24,8 @@ class Yolo:
         return 1 / (1 + np.exp(-x))
 
     def process_outputs(self, outputs, image_size):
-        """Decodes raw outputs into (x1, y1, x2, y2) pixel coordinates."""
+        """Decodes raw outputs into (x1, y1, x2, y2) pixel coordinates.
+        """
         boxes = []
         box_confidences = []
         box_class_probs = []
@@ -64,7 +66,8 @@ class Yolo:
         return boxes, box_confidences, box_class_probs
 
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
-        """Keeps boxes whose best class score meets the confidence threshold."""
+        """Keeps boxes whose best class score meets the confidence threshold.
+        """
         fb, bc, bs = [], [], []
 
         for box, conf, probs in zip(boxes, box_confidences, box_class_probs):
@@ -138,7 +141,8 @@ class Yolo:
 
     @staticmethod
     def load_images(folder_path):
-        """Loads all images from a folder into a list of numpy arrays."""
+        """Loads all images from a folder into a list of numpy arrays.
+        """
         images = []
         image_paths = []
         extensions = ('.jpg', '.jpeg', '.png', '.bmp')
@@ -164,7 +168,7 @@ class Yolo:
         new_width = self.model.input_shape[1]
         new_height = self.model.input_shape[2]
         for img in images:
-            #every image is a pixel matrix to get it size from shape
+            # every image is a pixel matrix to get it size from shape
             image_shapes.append((img.shape[0], img.shape[1]))
             # resize image to new dimensions
             resize = cv2.resize(img, (new_width, new_height),
