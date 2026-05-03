@@ -7,8 +7,7 @@ import os
 
 
 class Yolo:
-    """Performs object detection using the YOLOv3 algorithm.
-    """
+    """Performs object detection using the YOLOv3 algorithm."""
 
     def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
         """Loads the Keras model, class names, and detection parameters."""
@@ -24,15 +23,14 @@ class Yolo:
         return 1 / (1 + np.exp(-x))
 
     def process_outputs(self, outputs, image_size):
-        """Decodes raw outputs into (x1, y1, x2, y2) pixel coordinates.
-        """
+        """Decodes raw outputs into (x1, y1, x2, y2) pixel coordinates."""
         boxes = []
         box_confidences = []
         box_class_probs = []
 
         image_h, image_w = image_size
-        input_w = self.model.input.shape[1]
-        input_h = self.model.input.shape[2]
+        input_w = self.model.input.shape[2]
+        input_h = self.model.input.shape[1]
 
         for i, output in enumerate(outputs):
             grid_h, grid_w, anchor_boxes, _ = output.shape
@@ -66,8 +64,7 @@ class Yolo:
         return boxes, box_confidences, box_class_probs
 
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
-        """Keeps boxes whose best class score meets the confidence threshold.
-        """
+        """Keeps boxes whose best class score meets the confidence threshold."""
         fb, bc, bs = [], [], []
 
         for box, conf, probs in zip(boxes, box_confidences, box_class_probs):
@@ -157,8 +154,8 @@ class Yolo:
         return images, image_paths
 
     def preprocess_images(self, images):
-        """Resizes and normalizes images to match the model's input format.
-        """
+        """Resizes and normalizes images to match the model's input format."""
+        # model.input.shape = (None, height, width, 3)
         input_h = self.model.input.shape[1]
         input_w = self.model.input.shape[2]
 
@@ -166,14 +163,16 @@ class Yolo:
         image_shapes = []
 
         for img in images:
-            # Store original (H, W) before resizing
+            # Save original (height, width) before any transformation
             image_shapes.append([img.shape[0], img.shape[1]])
 
+            # cv2.resize takes (width, height)
             resized = cv2.resize(
                 img,
                 (input_w, input_h),
                 interpolation=cv2.INTER_CUBIC
             )
+            # Normalize pixels from [0, 255] to [0, 1]
             pimages.append(resized / 255.0)
 
         return np.array(pimages), np.array(image_shapes)
