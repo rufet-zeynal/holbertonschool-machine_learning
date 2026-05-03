@@ -35,7 +35,7 @@ class Yolo:
         for i, output in enumerate(outputs):
             grid_h, grid_w, anchor_boxes, _ = output.shape
 
-            # Build grid offset arrays so each cell knows its (col, row) position
+            # Buildgrid offsetarrays so each cell knows its (col, row) position
             cx = np.tile(np.arange(grid_w).reshape(1, grid_w, 1),
                          (grid_h, 1, anchor_boxes))
             cy = np.tile(np.arange(grid_h).reshape(grid_h, 1, 1),
@@ -56,7 +56,7 @@ class Yolo:
             bw = (pw * np.exp(output[..., 2])) / input_w
             bh = (ph * np.exp(output[..., 3])) / input_h
 
-            # Convert center+size fractions to corner pixel coords in original image
+            #Convertcenter+size fractions to corner pixel coordsin original image
             boxes.append(np.stack([
                 (bx - bw / 2) * image_w,   # x1
                 (by - bh / 2) * image_h,   # y1
@@ -77,7 +77,7 @@ class Yolo:
         fb, bc, bs = [], [], []
 
         for box, conf, probs in zip(boxes, box_confidences, box_class_probs):
-            #Score=objectness confidence * class probability (broadcast over classes)
+            #Score=objectness confidence*class probability(broadcastoverclasses)
             scores = conf * probs
 
             # Pick the class with the highest score for each box
@@ -135,7 +135,7 @@ class Yolo:
                 x2 = np.minimum(cb[0, 2], cb[1:, 2])
                 y2 = np.minimum(cb[0, 3], cb[1:, 3])
 
-                # Intersection area (clamp negatives to 0 for non-overlapping boxes)
+                # Intersection area
                 inter = np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
 
                 # Individual box areas
@@ -152,7 +152,7 @@ class Yolo:
                 # Discard boxes that overlap too much with the best box;
                 # keep only those below the threshold (different objects)
                 keep_idx = np.where(iou < self.nms_t)[0]
-                cb = cb[keep_idx + 1]   # +1 because iou was computed vs cb[1:]
+                cb = cb[keep_idx + 1]
                 cs = cs[keep_idx + 1]
 
             box_predictions.append(np.array(keep_boxes))
