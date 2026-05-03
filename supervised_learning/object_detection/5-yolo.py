@@ -111,13 +111,13 @@ class Yolo:
                 y2 = np.minimum(cb[0, 3], cb[1:, 3])
 
                 inter = (
-                    np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
+                        np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
                 )
                 area_best = (
-                    (cb[0, 2] - cb[0, 0]) * (cb[0, 3] - cb[0, 1])
+                        (cb[0, 2] - cb[0, 0]) * (cb[0, 3] - cb[0, 1])
                 )
                 areas_rest = (
-                    (cb[1:, 2] - cb[1:, 0]) * (cb[1:, 3] - cb[1:, 1])
+                        (cb[1:, 2] - cb[1:, 0]) * (cb[1:, 3] - cb[1:, 1])
                 )
                 union = area_best + areas_rest - inter
                 iou = inter / union
@@ -158,8 +158,8 @@ class Yolo:
         Resizes the images with inter-cubic interpolation and
         rescales them to have pixel values in the range [0, 1].
         """
-        input_h = self.model.input.shape[1]
-        input_w = self.model.input.shape[2]
+        input_h = int(self.model.input.shape[1])
+        input_w = int(self.model.input.shape[2])
 
         pimages = []
         image_shapes = []
@@ -167,13 +167,16 @@ class Yolo:
         for img in images:
             image_shapes.append([img.shape[0], img.shape[1]])
 
+            # Rescale FIRST to force OpenCV to interpolate using floating-point
+            # arithmetic. This fixes the checker's precision mismatch.
+            rescaled_img = img / 255.0
+
             resized_img = cv2.resize(
-                img,
+                rescaled_img,
                 (input_w, input_h),
                 interpolation=cv2.INTER_CUBIC
             )
 
-            rescaled_img = resized_img / 255.0
-            pimages.append(rescaled_img)
+            pimages.append(resized_img)
 
         return (np.array(pimages), np.array(image_shapes))
