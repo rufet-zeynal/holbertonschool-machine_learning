@@ -8,7 +8,7 @@ class Yolo:
     """Performs object detection using the YOLOv3 algorithm."""
 
     def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
-        """Loads the Keras model, class names, and stores all detection parameters."""
+        """Loads the Keras model, class names, and detection parameters."""
         self.model = tf.keras.models.load_model(model_path)
         with open(classes_path, 'r') as f:
             self.class_names = [line.strip() for line in f.readlines()]
@@ -17,11 +17,11 @@ class Yolo:
         self.anchors = anchors
 
     def _sigmoid(self, x):
-        """Applies the sigmoid activation function element-wise."""
+        """Applies sigmoid activation element-wise."""
         return 1 / (1 + np.exp(-x))
 
     def process_outputs(self, outputs, image_size):
-        """Decodes raw model outputs into (x1, y1, x2, y2) pixel coordinates."""
+        """Decodes raw outputs into (x1, y1, x2, y2) pixel coordinates."""
         boxes = []
         box_confidences = []
         box_class_probs = []
@@ -33,7 +33,7 @@ class Yolo:
         for i, output in enumerate(outputs):
             grid_h, grid_w, anchor_boxes, _ = output.shape
 
-            # Build grid offsets so each cell knows its (col, row) position
+            # Grid offsets so each cell knows its (col, row) position
             cx = np.tile(
                 np.arange(grid_w).reshape(1, grid_w, 1),
                 (grid_h, 1, anchor_boxes)
@@ -56,12 +56,11 @@ class Yolo:
             bh = (ph * np.exp(output[..., 3])) / input_h
 
             # Convert center+size to corner pixel coords in original image
-            boxes.append(np.stack([
-                (bx - bw / 2) * image_w,
-                (by - bh / 2) * image_h,
-                (bx + bw / 2) * image_w,
-                (by + bh / 2) * image_h
-            ], axis=-1))
+            x1 = (bx - bw / 2) * image_w
+            y1 = (by - bh / 2) * image_h
+            x2 = (bx + bw / 2) * image_w
+            y2 = (by + bh / 2) * image_h
+            boxes.append(np.stack([x1, y1, x2, y2], axis=-1))
 
             # Sigmoid-activate confidence and class probabilities
             box_confidences.append(self._sigmoid(output[..., 4:5]))
@@ -70,7 +69,7 @@ class Yolo:
         return boxes, box_confidences, box_class_probs
 
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
-        """Keeps only boxes whose best class score meets the confidence threshold."""
+        """Keeps boxes whose best class score meets the confidence threshold."""
         fb, bc, bs = [], [], []
 
         for box, conf, probs in zip(boxes, box_confidences, box_class_probs):
@@ -92,13 +91,13 @@ class Yolo:
                 np.concatenate(bs, axis=0))
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
-        """Suppresses redundant overlapping boxes, keeping only the best per object."""
+        """Suppresses redundant overlapping boxes per class."""
         box_predictions = []
         predicted_box_classes = []
         predicted_box_scores = []
 
-        # Process each class independently so boxes from different classes
-        # never suppress each other
+        # Process each class independently so different classes never
+        # suppress each other
         for cls in np.unique(box_classes):
 
             # Isolate all boxes belonging to this class
@@ -106,7 +105,7 @@ class Yolo:
             cb = filtered_boxes[idx]
             cs = box_scores[idx]
 
-            # Sort by score descending so the best box is always at index 0
+            # Sort descending so the best box is always at index 0
             order = np.argsort(cs)[::-1]
             cb = cb[order]
             cs = cs[order]
@@ -115,24 +114,28 @@ class Yolo:
             keep_scores = []
 
             while len(cb) > 0:
-                # The first box is always the current best — keep it
+                # Keep the current best box
                 keep_boxes.append(cb[0])
                 keep_scores.append(cs[0])
 
                 if len(cb) == 1:
                     break
 
-                # Compute intersection rectangle corners vs all remaining boxes
+                # Intersection corners: best box vs all remaining
                 x1 = np.maximum(cb[0, 0], cb[1:, 0])
                 y1 = np.maximum(cb[0, 1], cb[1:, 1])
                 x2 = np.minimum(cb[0, 2], cb[1:, 2])
                 y2 = np.minimum(cb[0, 3], cb[1:, 3])
 
-                # Intersection area (clamped to 0 for non-overlapping boxes)
-                inter = np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
+                # Intersection area, clamped to 0 for non-overlapping boxes
+                inter = (
+                    np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
+                )
 
-                # Individual box areas
-                area_best = (cb[0, 2] - cb[0, 0]) * (cb[0, 3] - cb[0, 1])
+                # Individual areas
+                area_best = (
+                    (cb[0, 2] - cb[0, 0]) * (cb[0, 3] - cb[0, 1])
+                )
                 areas_rest = (
                     (cb[1:, 2] - cb[1:, 0]) * (cb[1:, 3] - cb[1:, 1])
                 )
@@ -143,7 +146,7 @@ class Yolo:
                 # IoU: 0 = no overlap, 1 = identical boxes
                 iou = inter / union
 
-                # Discard boxes that overlap too much — they detect the same object
+                # Discard boxes that overlap too much — same object
                 keep_idx = np.where(iou < self.nms_t)[0]
                 cb = cb[keep_idx + 1]
                 cs = cs[keep_idx + 1]
