@@ -29,8 +29,8 @@ class Yolo:
         box_class_probs = []
 
         image_h, image_w = image_size
-        input_w = self.model.input.shape[2]
         input_h = self.model.input.shape[1]
+        input_w = self.model.input.shape[2]
 
         for i, output in enumerate(outputs):
             grid_h, grid_w, anchor_boxes, _ = output.shape
@@ -143,7 +143,7 @@ class Yolo:
         image_paths = []
         extensions = ('.jpg', '.jpeg', '.png', '.bmp')
 
-        for fname in os.listdir(folder_path):
+        for fname in sorted(os.listdir(folder_path)):
             if fname.lower().endswith(extensions):
                 path = os.path.join(folder_path, fname)
                 img = cv2.imread(path)
@@ -153,30 +153,29 @@ class Yolo:
 
         return images, image_paths
 
-def preprocess_images(self, images):
-    """Resizes and normalizes images to match the model's input format."""
-    input_h = self.model.input.shape[1]
-    input_w = self.model.input.shape[2]
+    def preprocess_images(self, images):
+        """Resizes and normalizes images to match the model's input format."""
+        input_h = self.model.input.shape[1]
+        input_w = self.model.input.shape[2]
 
-    pimages = []
-    image_shapes = []
+        pimages = []
+        image_shapes = []
 
-    for img in images:
-        # Save original (height, width) before any transformation
-        image_shapes.append([img.shape[0], img.shape[1]])
+        for img in images:
+            # Save original (height, width) before any transformation
+            image_shapes.append([img.shape[0], img.shape[1]])
 
-        # Resize with inter-cubic interpolation
-        # cv2.resize takes (width, height)
-        resized = cv2.resize(
-            img,
-            (input_w, input_h),
-            interpolation=cv2.INTER_CUBIC
-        )
+            # cv2.resize takes (width, height)
+            resized = cv2.resize(
+                img,
+                (input_w, input_h),
+                interpolation=cv2.INTER_CUBIC
+            )
 
-        # Convert BGR (cv2 default) to RGB (model expects)
-        resized = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
+            # Convert BGR (cv2 default) to RGB (model expects)
+            resized = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
 
-        # Normalize pixels from [0, 255] to [0, 1]
-        pimages.append(resized / 255.0)
+            # Normalize pixels from [0, 255] to [0, 1]
+            pimages.append(resized / 255.0)
 
-    return np.array(pimages), np.array(image_shapes)
+        return np.array(pimages), np.array(image_shapes)
