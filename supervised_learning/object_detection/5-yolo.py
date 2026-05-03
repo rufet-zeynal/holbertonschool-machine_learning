@@ -154,7 +154,10 @@ class Yolo:
         return images, image_paths
 
     def preprocess_images(self, images):
-        """Resizes and normalizes images to match the model's input format."""
+        """
+        Resizes the images with inter-cubic interpolation and
+        rescales them to have pixel values in the range [0, 1].
+        """
         input_h = self.model.input.shape[1]
         input_w = self.model.input.shape[2]
 
@@ -162,17 +165,15 @@ class Yolo:
         image_shapes = []
 
         for img in images:
-            # Save original (height, width) before any transformation
             image_shapes.append([img.shape[0], img.shape[1]])
 
-            # cv2.resize takes (width, height)
-            resized = cv2.resize(
+            resized_img = cv2.resize(
                 img,
                 (input_w, input_h),
                 interpolation=cv2.INTER_CUBIC
             )
 
-            # Normalize pixels from [0, 255] to [0, 1]
-            pimages.append(resized / 255.0)
+            rescaled_img = resized_img / 255.0
+            pimages.append(rescaled_img)
 
-        return np.array(pimages), np.array(image_shapes)
+        return (np.array(pimages), np.array(image_shapes))
