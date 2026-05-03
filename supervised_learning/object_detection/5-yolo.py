@@ -143,7 +143,7 @@ class Yolo:
         image_paths = []
         extensions = ('.jpg', '.jpeg', '.png', '.bmp')
 
-        for fname in sorted(os.listdir(folder_path)):
+        for fname in os.listdir(folder_path):
             if fname.lower().endswith(extensions):
                 path = os.path.join(folder_path, fname)
                 img = cv2.imread(path)
@@ -165,12 +165,9 @@ class Yolo:
             # Save original (height, width) before any transformation
             image_shapes.append([img.shape[0], img.shape[1]])
 
-            # Convert BGR (cv2 default) to RGB before resizing
-            rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
             # cv2.resize takes (width, height)
             resized = cv2.resize(
-                rgb,
+                img,
                 (input_w, input_h),
                 interpolation=cv2.INTER_CUBIC
             )
