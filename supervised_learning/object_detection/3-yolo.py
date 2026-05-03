@@ -77,7 +77,7 @@ class Yolo:
         fb, bc, bs = [], [], []
 
         for box, conf, probs in zip(boxes, box_confidences, box_class_probs):
-            # Score = objectness confidence * class probability (broadcast over classes)
+            #Score=objectness confidence * class probability (broadcast over classes)
             scores = conf * probs
 
             # Pick the class with the highest score for each box
