@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Initialize cluster centroids for K-means clustering"""
+"""
+Initialize cluster centroids for K-means clustering"""
 import numpy as np
 
 
