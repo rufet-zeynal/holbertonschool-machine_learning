@@ -5,6 +5,7 @@ import numpy as np
 
 class GaussianProcess:
     """Noiseless 1D Gaussian Process"""
+
     def __init__(self, X_init, Y_init, l=1, sigma_f=1):
         self.X = X_init
         self.Y = Y_init
@@ -21,8 +22,8 @@ class GaussianProcess:
         """
         # sqdist shape: (m, n)
         sqdist = (
-            np.sum(X1 ** 2, axis=1).reshape(-1, 1)
-            + np.sum(X2 ** 2, axis=1)
-            - 2 * X1 @ X2.T
+            np.sum(X1 ** 2, axis=1).reshape(-1, 1) +
+            np.sum(X2 ** 2, axis=1)-
+            2 * X1 @ X2.T
         )
         return self.sigma_f ** 2 * np.exp(-sqdist / (2 * self.l ** 2))
