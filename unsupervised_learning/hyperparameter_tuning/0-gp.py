@@ -5,6 +5,7 @@ import numpy as np
 
 class GaussianProcess:
     """Noiseless 1D Gaussian Process"""
+
     def __init__(self, X_init, Y_init, l=1, sigma_f=1):
         self.X = X_init
         self.Y = Y_init
