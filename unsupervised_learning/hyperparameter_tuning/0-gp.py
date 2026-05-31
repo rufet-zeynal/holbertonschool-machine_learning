@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Gaussian Process with RBF kernel
-"""
+"""Gaussian Process with RBF kernel"""
 import numpy as np
 
 
