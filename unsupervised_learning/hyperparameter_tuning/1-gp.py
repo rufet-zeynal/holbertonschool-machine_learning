@@ -14,11 +14,10 @@ class GaussianProcess:
 
     def kernel(self, X1, X2):
         """RBF kernel — same as task 0"""
-        sqdist = (
-            np.sum(X1 ** 2, axis=1).reshape(-1, 1)
-            + np.sum(X2 ** 2, axis=1)
-            - 2 * X1 @ X2.T
-        )
+        # replace the sqdist block with this
+        sum_x1 = np.sum(X1 ** 2, axis=1).reshape(-1, 1)
+        sum_x2 = np.sum(X2 ** 2, axis=1)
+        sqdist = sum_x1 + sum_x2 - 2 * np.dot(X1, X2.T)
         return self.sigma_f ** 2 * np.exp(-sqdist / (2 * self.l ** 2))
 
     def predict(self, X_s):
