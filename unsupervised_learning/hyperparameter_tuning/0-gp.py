@@ -21,7 +21,7 @@ class GaussianProcess:
         This gives us the full (m, n) matrix in one shot without loops.
         """
         # sqdist shape: (m, n)
-        # replace the sqdist block with this
+        # Fixed indentation and kept it on a single line or properly aligned
         sqdist = (np.sum(X1 ** 2, axis=1).reshape(-1, 1) +
                   np.sum(X2 ** 2, axis=1) -
                   2 * np.dot(X1, X2.T))
