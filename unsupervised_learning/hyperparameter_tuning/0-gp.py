@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Gaussian Process with RBF kernel
-"""
+"""Gaussian Process with RBF kernel"""
 import numpy as np
 
 
@@ -22,8 +21,8 @@ class GaussianProcess:
         This gives us the full (m, n) matrix in one shot without loops.
         """
         # sqdist shape: (m, n)
-        # Fixed indentation and kept it on a single line or properly aligned
-        sqdist = (np.sum(X1 ** 2, axis=1).reshape(-1, 1) +
-                  np.sum(X2 ** 2, axis=1) -
-                  2 * np.dot(X1, X2.T))
+        # Combined onto a single line to completely avoid W503 and W504
+        sum_x1 = np.sum(X1 ** 2, axis=1).reshape(-1, 1)
+        sum_x2 = np.sum(X2 ** 2, axis=1)
+        sqdist = sum_x1 + sum_x2 - 2 * np.dot(X1, X2.T)
         return self.sigma_f ** 2 * np.exp(-sqdist / (2 * self.l ** 2))
