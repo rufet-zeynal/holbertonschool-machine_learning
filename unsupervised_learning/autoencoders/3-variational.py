@@ -25,8 +25,11 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         )
         return z_mean + keras.backend.exp(z_log_var / 2) * epsilon
 
-    z = keras.layers.Lambda(sampling, output_shape=(latent_dims,),
-                           name='z')([mu, log_sig])
+    z = keras.layers.Lambda(
+        sampling,
+        output_shape=(latent_dims,),
+        name='z'
+    )([mu, log_sig])
 
     encoder = keras.Model(encoder_inputs, [z, mu, log_sig], name='encoder')
 
@@ -44,12 +47,16 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     auto = keras.Model(encoder_inputs, auto_outputs, name='vae')
 
     # 4. LOSS CALCULATION VIA KERAS BACKEND
-    reconstruction_loss = keras.losses.binary_crossentropy(encoder_inputs,
-                                                          auto_outputs)
+    reconstruction_loss = keras.losses.binary_crossentropy(
+        encoder_inputs,
+        auto_outputs
+    )
     reconstruction_loss *= input_dims
 
+    # Adjusted indentation to cleanly align mathematical operations
     kl_loss = -0.5 * keras.backend.sum(
-        1 + log_sig - keras.backend.square(mu) - keras.backend.exp(log_sig),
+        1 + log_sig - keras.backend.square(mu) -
+        keras.backend.exp(log_sig),
         axis=-1
     )
     vae_loss = keras.backend.mean(reconstruction_loss + kl_loss)
