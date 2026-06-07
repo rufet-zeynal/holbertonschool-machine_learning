@@ -24,22 +24,23 @@ def autoencoder(input_dims, filters, latent_dims):
     decoder_inputs = keras.Input(shape=latent_dims)
     x = decoder_inputs
 
-    # Use the correct slice of reversed filters: [8, 16]
-    dec_filters = filters[::-1][1:]
+    # Reverse the list of filters to build backward path cleanly
+    rev_filters = filters[::-1]
 
-    for f in dec_filters:
+    # Process all layers except for the last two custom ones
+    for i in range(len(filters) - 1):
         x = keras.layers.Conv2D(
-            f, (3, 3), activation='relu', padding='same'
+            rev_filters[i], (3, 3), activation='relu', padding='same'
         )(x)
         x = keras.layers.UpSampling2D((2, 2))(x)
 
-    # Second to last layer uses 'valid' padding
+    # Second to last convolution layer uses 'valid' padding
     x = keras.layers.Conv2D(
         filters[0], (3, 3), activation='relu', padding='valid'
     )(x)
     x = keras.layers.UpSampling2D((2, 2))(x)
 
-    # Final convolution layer matching original image channel dimension
+    # Last convolution layer maps exactly to input image channels
     channels = input_dims[-1]
     outputs = keras.layers.Conv2D(
         channels, (3, 3), activation='sigmoid', padding='same'
