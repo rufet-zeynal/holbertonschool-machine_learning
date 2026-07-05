@@ -1,17 +1,32 @@
 #!/usr/bin/env python3
-"""creates and trains a gensim word2vec model"""
+"""Word2Vec module"""
 import gensim
 
 
 def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
-                    negative=5, cbow=True, epochs=5, seed=0, workers=1):
-    """builds and trains a word2vec model"""
+                   negative=5, cbow=True, epochs=5, seed=0, workers=1):
+    """Creates, builds and trains a gensim word2vec model"""
+    sg = 0 if cbow else 1
+
+    # 1. Create the model template
     model = gensim.models.Word2Vec(
-        sentences=sentences,
         vector_size=vector_size,
-        window=window, min_count=min_count,
-        workers=workers, seed=seed, sg=cbow,
-        epochs=epochs, negative=negative)
-    model.train(sentences=sentences, total_examples=model.corpus_count,
-                epochs=model.epochs)
+        min_count=min_count,
+        window=window,
+        negative=negative,
+        sg=sg,
+        seed=seed,
+        workers=workers
+    )
+
+    # 2. Build the vocabulary
+    model.build_vocab(sentences)
+
+    # 3. Train using explicit keyword matching for your Gensim version
+    model.train(
+        corpus_iterable=sentences,
+        total_examples=model.corpus_count,
+        epochs=epochs
+    )
+
     return model
