@@ -8,7 +8,8 @@ def bag_of_words(sentences, vocab=None):
     """Creates BoW matrix"""
     if vocab is None:
         # Get unique words >= 2 chars
-        vocab = sorted(set(w for s in sentences for w in re.findall(r'\b\w\w+\b', s.lower())))
+        vocab = sorted(set(w for s in sentences
+                           for w in re.findall(r'\b\w\w+\b', s.lower())))
 
     # Init matrix
     E = np.zeros((len(sentences), len(vocab)), dtype=int)
