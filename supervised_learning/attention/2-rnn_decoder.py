@@ -1,46 +1,49 @@
 #!/usr/bin/env python3
-"""RNN Decoder module."""
+"""RNN Decoder module for machine translation with attention"""
 import tensorflow as tf
 SelfAttention = __import__('1-self_attention').SelfAttention
 
 
 class RNNDecoder(tf.keras.layers.Layer):
-    """RNN Decoder class for machine translation."""
+    """Decodes for machine translation, using a GRU and self attention"""
 
     def __init__(self, vocab, embedding, units, batch):
-        """Initializes the decoder layers."""
+        """
+        Class constructor
+
+        Args:
+            vocab: integer, size of the output vocabulary
+            embedding: integer, dimensionality of the embedding vector
+            units: integer, number of hidden units in the RNN cell
+            batch: integer, batch size
+        """
         super(RNNDecoder, self).__init__()
         self.embedding = tf.keras.layers.Embedding(vocab, embedding)
         self.gru = tf.keras.layers.GRU(
             units,
             return_sequences=True,
             return_state=True,
-            recurrent_initializer='glorot_uniform'
-        )
+            recurrent_initializer='glorot_uniform')
         self.F = tf.keras.layers.Dense(vocab)
         self.attention = SelfAttention(units)
 
     def call(self, x, s_prev, hidden_states):
-        """Decodes the encoded sequence to output words."""
-        # Get the context vector from SelfAttention
+        """
+        Decodes for machine translation
+        """
         context, _ = self.attention(s_prev, hidden_states)
 
-        # Get the embedding for the input target word x
-        x_emb = self.embedding(x)
+        # embed the previous word -> shape (batch, 1, embedding)
+        x = self.embedding(x)
 
-        # Expand context dimension from (batch, units) to (batch, 1, units)
-        context_expanded = tf.expand_dims(context, 1)
+        # give context a time dimension so it can concat with x
+        context = tf.expand_dims(context, 1)
+        x = tf.concat([context, x], axis=-1)
 
-        # Concatenate context vector and target word embedding in that order
-        merged = tf.concat([context_expanded, x_emb], axis=-1)
-
-        # Pass the merged representation into the GRU layer
-        outputs, s = self.gru(merged, initial_state=s_prev)
-
-        # Reshape or squeeze the GRU sequence output from (batch, 1, units)
-        outputs = tf.squeeze(outputs, axis=1)
-
-        # Get prediction logits for vocabulary distribution
+        # run through the GRU, then drop the time dimension for the
+        # dense layer
+        outputs, s = self.gru(x)
+        outputs = tf.reshape(outputs, (-1, outputs.shape[2]))
         y = self.F(outputs)
 
         return y, s
