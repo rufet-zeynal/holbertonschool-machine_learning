@@ -26,28 +26,29 @@ class Dataset:
         Creates sub-word tokenizers for the dataset
         """
         pt_base = transformers.AutoTokenizer.from_pretrained(
-            'neuralmind/bert-base-portuguese-cased',
-            use_fast=True
+            'neuralmind/bert-base-portuguese-cased'
         )
         en_base = transformers.AutoTokenizer.from_pretrained(
-            'bert-base-uncased',
-            use_fast=True
+            'bert-base-uncased'
         )
 
-        # Safely extract text without relying on as_numpy_iterator()
-        pt_list = []
-        en_list = []
-        for pt, en in data:
-            pt_list.append(pt.numpy().decode('utf-8'))
-            en_list.append(en.numpy().decode('utf-8'))
+        def get_pt_corpus():
+            """Generator for Portuguese corpus using fast batch processing"""
+            for pt_batch, _ in data.batch(1000):
+                yield [s.decode('utf-8') for s in pt_batch.numpy()]
+
+        def get_en_corpus():
+            """Generator for English corpus using fast batch processing"""
+            for _, en_batch in data.batch(1000):
+                yield [s.decode('utf-8') for s in en_batch.numpy()]
 
         vocab_size = 2 ** 13
         tokenizer_pt = pt_base.train_new_from_iterator(
-            pt_list,
+            get_pt_corpus(),
             vocab_size=vocab_size
         )
         tokenizer_en = en_base.train_new_from_iterator(
-            en_list,
+            get_en_corpus(),
             vocab_size=vocab_size
         )
 
