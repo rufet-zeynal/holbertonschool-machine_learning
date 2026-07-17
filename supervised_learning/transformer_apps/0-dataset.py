@@ -2,8 +2,7 @@
 """
 Sets up the dataset and tokenizers for machine translation
 """
-import tensorflow as tf
-from transformers import AutoTokenizer
+import transformers
 from setup import load_pt2en
 
 
@@ -11,7 +10,6 @@ class Dataset:
     """
     Dataset class that loads and prepares a dataset for machine translation
     """
-
     def __init__(self):
         """
         Initializes the dataset object and sets up the tokenizers.
@@ -27,20 +25,22 @@ class Dataset:
         """
         Creates sub-word tokenizers for the dataset
         """
-        pt_base_tokenizer = AutoTokenizer.from_pretrained(
+        pt_base_tokenizer = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased',
             use_fast=True
         )
-        en_base_tokenizer = AutoTokenizer.from_pretrained(
+        en_base_tokenizer = transformers.AutoTokenizer.from_pretrained(
             'bert-base-uncased',
             use_fast=True
         )
 
         def get_pt_corpus():
+            """Generator for Portuguese corpus"""
             for pt, _ in data.batch(1000).as_numpy_iterator():
                 yield [sentence.decode('utf-8') for sentence in pt]
 
         def get_en_corpus():
+            """Generator for English corpus"""
             for _, en in data.batch(1000).as_numpy_iterator():
                 yield [sentence.decode('utf-8') for sentence in en]
 
