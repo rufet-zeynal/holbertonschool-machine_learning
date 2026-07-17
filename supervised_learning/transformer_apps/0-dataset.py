@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sets up the dataset and tokenizers for machine translation
+Set up the dataset and tokenizers for machine translation
 """
 import transformers
 from setup import load_pt2en
