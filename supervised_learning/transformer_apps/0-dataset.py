@@ -1,41 +1,57 @@
 #!/usr/bin/env python3
-""" Defines `Dataset`. """
-import tensorflow.compat.v2 as tf
-import tensorflow_datasets as tfds
+"""
+Sets up the dataset and tokenizers for machine translation
+"""
+import tensorflow as tf
+from transformers import AutoTokenizer
+from setup import load_pt2en
 
 
 class Dataset:
-    """ Loads and preps a dataset for machine translation. """
+    """
+    Dataset class that loads and prepares a dataset for machine translation
+    """
 
     def __init__(self):
-        """ Initializes a Dataset for NLP. """
-        dataset = 'ted_hrlr_translate/pt_to_en'
-        self.data_train = tfds.load(dataset, split='train', as_supervised=True)
-        self.data_valid = tfds.load(
-            dataset, split='validation', as_supervised=True)
-        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
-            self.data_train)
+        """
+        Initializes the dataset object and sets up the tokenizers.
+        """
+        self.data_train = load_pt2en('train')
+        self.data_valid = load_pt2en('validation')
+
+        pt_tok, en_tok = self.tokenize_dataset(self.data_train)
+        self.tokenizer_pt = pt_tok
+        self.tokenizer_en = en_tok
 
     def tokenize_dataset(self, data):
         """
-        Creates sub-word tokenizers for this dataset.
-
-        The maximum vocabulary size is 2^15.
-
-        data: A `tf.data.Dataset` whose examples are formatted as a tuple
-            (pt, en):
-            pt: The `tf.Tensor` containing the Portuguese sentence.
-            en: The `tf.Tensor` containing the corresponding English sentence.
-
-        Returns: (tokenizer_pt, tokenizer_en)
-            tokenizer_pt: The Portuguese tokenizer.
-            tokenizer_en: The English tokenizer.
+        Creates sub-word tokenizers for the dataset
         """
-        MAX_VOCAB_SIZE = 2 ** 15
-        Tokenizer = tfds.deprecated.text.SubwordTextEncoder
-        tokenizer_pt = Tokenizer.build_from_corpus(
-            (pt.numpy() for pt, en in data), target_vocab_size=MAX_VOCAB_SIZE)
-        tokenizer_en = Tokenizer.build_from_corpus(
-            (en.numpy() for pt, en in data), target_vocab_size=MAX_VOCAB_SIZE)
+        pt_base_tokenizer = AutoTokenizer.from_pretrained(
+            'neuralmind/bert-base-portuguese-cased',
+            use_fast=True
+        )
+        en_base_tokenizer = AutoTokenizer.from_pretrained(
+            'bert-base-uncased',
+            use_fast=True
+        )
 
-        return (tokenizer_pt, tokenizer_en)
+        def get_pt_corpus():
+            for pt, _ in data.batch(1000).as_numpy_iterator():
+                yield [sentence.decode('utf-8') for sentence in pt]
+
+        def get_en_corpus():
+            for _, en in data.batch(1000).as_numpy_iterator():
+                yield [sentence.decode('utf-8') for sentence in en]
+
+        vocab_size = 2 ** 13
+        tokenizer_pt = pt_base_tokenizer.train_new_from_iterator(
+            get_pt_corpus(),
+            vocab_size=vocab_size
+        )
+        tokenizer_en = en_base_tokenizer.train_new_from_iterator(
+            get_en_corpus(),
+            vocab_size=vocab_size
+        )
+
+        return tokenizer_pt, tokenizer_en
