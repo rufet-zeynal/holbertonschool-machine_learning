@@ -1,55 +1,52 @@
 #!/usr/bin/env python3
-"""
-Set up the dataset and tokenizers for machine translation
-"""
-import transformers
+"""Dataset class for pt -> en machine translation"""
+from transformers import AutoTokenizer
 from setup import load_pt2en
 
 
 class Dataset:
-    """
-    Dataset class that loads and prepares a dataset for machine translation
-    """
+    """Loads and preps the pt/en dataset for a Transformer"""
+
     def __init__(self):
         """
-        Initializes the dataset object and sets up the tokenizers.
+        Sets:
+            data_train - train split, (pt, en) tf.string pairs
+            data_valid - validation split, (pt, en) tf.string pairs
+            tokenizer_pt - Portuguese sub-word tokenizer
+            tokenizer_en - English sub-word tokenizer
         """
         self.data_train = load_pt2en('train')
         self.data_valid = load_pt2en('validation')
-
-        pt_tok, en_tok = self.tokenize_dataset(self.data_train)
-        self.tokenizer_pt = pt_tok
-        self.tokenizer_en = en_tok
+        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
+            self.data_train)
 
     def tokenize_dataset(self, data):
         """
         Creates sub-word tokenizers for the dataset
+
+        data: tf.data.Dataset of (pt, en) tf.Tensor pairs
+
+        Returns: tokenizer_pt, tokenizer_en
         """
-        pt_base = transformers.AutoTokenizer.from_pretrained(
-            'neuralmind/bert-base-portuguese-cased'
-        )
-        en_base = transformers.AutoTokenizer.from_pretrained(
-            'bert-base-uncased'
-        )
-
-        def get_pt_corpus():
-            """Generator for Portuguese corpus using fast batch processing"""
-            for pt_batch, _ in data.batch(1000):
-                yield [s.decode('utf-8') for s in pt_batch.numpy()]
-
-        def get_en_corpus():
-            """Generator for English corpus using fast batch processing"""
-            for _, en_batch in data.batch(1000):
-                yield [s.decode('utf-8') for s in en_batch.numpy()]
-
         vocab_size = 2 ** 13
-        tokenizer_pt = pt_base.train_new_from_iterator(
-            get_pt_corpus(),
-            vocab_size=vocab_size
-        )
-        tokenizer_en = en_base.train_new_from_iterator(
-            get_en_corpus(),
-            vocab_size=vocab_size
-        )
+
+        # re-fit pretrained tokenizers on our corpus
+        pt_pretrained = AutoTokenizer.from_pretrained(
+            'neuralmind/bert-base-portuguese-cased')
+        en_pretrained = AutoTokenizer.from_pretrained('bert-base-uncased')
+
+        def pt_sentences():
+            for pt, en in data.as_numpy_iterator():
+                yield pt.decode('utf-8')
+
+        def en_sentences():
+            for pt, en in data.as_numpy_iterator():
+                yield en.decode('utf-8')
+
+        tokenizer_pt = pt_pretrained.train_new_from_iterator(
+            pt_sentences(), vocab_size=vocab_size)
+        tokenizer_en = en_pretrained.train_new_from_iterator(
+            en_sentences(), vocab_size=vocab_size)
 
         return tokenizer_pt, tokenizer_en
+
