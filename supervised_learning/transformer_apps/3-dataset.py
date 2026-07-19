@@ -11,10 +11,10 @@ class Dataset:
     def __init__(self, batch_size, max_len):
         """
         batch_size: batch size for training/validation
-        max_len: max number of tokens allowed per example sentence
+        max_len: max numberoftokens allowed per sentence
 
         Sets:
-            data_train - train split, batched and ready for training
+        data_train - train split, batched, ready for training
             data_valid - validation split, batched
             tokenizer_pt - Portuguese sub-word tokenizer
             tokenizer_en - English sub-word tokenizer
@@ -42,7 +42,7 @@ class Dataset:
 
     def tokenize_dataset(self, data):
         """
-        Creates sub-word tokenizers for the dataset
+        Creates sub-word tokenizers for dataset
 
         data: tf.data.Dataset of (pt, en) tf.Tensor pairs
 
