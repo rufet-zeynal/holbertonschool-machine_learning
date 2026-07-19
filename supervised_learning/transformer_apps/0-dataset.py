@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Dataset class for pt -> en machine translation"""
-from transformers import AutoTokenizer
+import transformers
 from setup import load_pt2en
 
 
@@ -31,9 +31,10 @@ class Dataset:
         vocab_size = 2 ** 13
 
         # re-fit pretrained tokenizers on our corpus
-        pt_pretrained = AutoTokenizer.from_pretrained(
+        pt_pretrained = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased')
-        en_pretrained = AutoTokenizer.from_pretrained('bert-base-uncased')
+        en_pretrained = transformers.AutoTokenizer.from_pretrained(
+            'bert-base-uncased')
 
         def pt_sentences():
             for pt, en in data.as_numpy_iterator():
@@ -49,4 +50,3 @@ class Dataset:
             en_sentences(), vocab_size=vocab_size)
 
         return tokenizer_pt, tokenizer_en
-
