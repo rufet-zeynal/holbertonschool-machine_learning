@@ -5,7 +5,8 @@ from setup import load_pt2en
 
 
 class Dataset:
-    """Load and preps the pt/en dataset for a Transformer"""
+    """Load
+     and preps the pt/en dataset for a Transformer"""
 
     def __init__(self):
         """
