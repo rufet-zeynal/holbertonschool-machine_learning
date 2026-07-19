@@ -6,7 +6,8 @@ from setup import load_pt2en
 
 
 class Dataset:
-    """Loads and preps the pt/en dataset for a Transformer"""
+    """Loads and preps the pt/en dataset for
+     a Transformer"""
 
     def __init__(self, batch_size, max_len):
         """
@@ -44,7 +45,8 @@ class Dataset:
         """
         Creates sub-word tokenizers for dataset
 
-        data: tf.data.Dataset of (pt, en) tf.Tensor pairs
+        data: tf.data.Dataset of (pt, en)
+        tf.Tensor pairs
 
         Returns: tokenizer_pt, tokenizer_en
         """
@@ -94,7 +96,8 @@ class Dataset:
 
     def tf_encode(self, pt, en):
         """
-        Acts as a tensorflow wrapper for the encode instance method
+        Acts as a tensorflow wrapper for
+         the encode instance method
 
         pt: tf.Tensor containing the Portuguese sentence
         en: tf.Tensor containing the English sentence
