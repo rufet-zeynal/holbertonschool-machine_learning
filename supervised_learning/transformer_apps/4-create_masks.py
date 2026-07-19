@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Builds the encoder/decoder masks """
+"""Builds the encoder/decoder masks
+used during Transformer training
+"""
 import tensorflow as tf
 
 
