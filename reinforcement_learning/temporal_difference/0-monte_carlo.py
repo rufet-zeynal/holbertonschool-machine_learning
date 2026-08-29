@@ -1,41 +1,54 @@
 #!/usr/bin/env python3
-"""Monte Carlo algorithm."""
+"""
+Monte Carlo algorithm for Value Estimation
+"""
+import numpy as np
 
 
-def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1,
-                gamma=0.99):
-    """Performs the Monte Carlo algorithm.
-
-    env: environment instance
-    V: ndarray, shape (s,) - value estimates
-    policy: function(state) -> action
-    episodes: number of episodes to train over
-    max_steps: max steps per episode
-    alpha: learning rate
-    gamma: discount rate
-
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
+                alpha=0.1, gamma=0.99):
     """
-    for ep in range(episodes):
+    Performs the Monte Carlo algorithm.
+
+    Args:
+        env: The Gymnasium environment instance.
+        V: numpy.ndarray of shape (s,) containing the value estimate.
+        policy: A function that takes in a state and returns the next action.
+        episodes: The total number of episodes to train over.
+        max_steps: The maximum number of steps per episode.
+        alpha: The learning rate.
+        gamma: The discount rate.
+
+    Returns:
+        V: The updated value estimate.
+    """
+    for _ in range(episodes):
         state, _ = env.reset()
         episode = []
 
-        # generate one full episode under the policy
-        for step in range(max_steps):
+        # Generate an episode
+        for _ in range(max_steps):
             action = policy(state)
             next_state, reward, terminated, truncated, _ = env.step(action)
             episode.append((state, reward))
-            state = next_state
+
             if terminated or truncated:
                 break
 
-        G = 0
-        visited = set()
+            state = next_state
 
-        # walk the episode backward, update on first visit only
-        for state, reward in reversed(episode):
-            G = reward + gamma * G
-            if state not in visited:
-                visited.add(state)
-                V[state] = V[state] + alpha * (G - V[state])
+        # Calculate returns and update value estimates
+        G = 0
+        # Keep track of states for the first-visit check
+        states_in_episode = [step[0] for step in episode]
+
+        for i in range(len(episode) - 1, -1, -1):
+            s, r = episode[i]
+            G = gamma * G + r
+
+            # First-visit MC: only update if it's the first time we visited
+            # this state in the current episode
+            if s not in states_in_episode[:i]:
+                V[s] = V[s] + alpha * (G - V[s])
 
     return V
