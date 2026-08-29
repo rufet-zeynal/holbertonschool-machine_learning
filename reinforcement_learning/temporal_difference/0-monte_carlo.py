@@ -9,6 +9,7 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
     """Perform the Monte Carlo algorithm."""
     for _ in range(episodes):
         state, _ = env.reset()
+
         states = []
         rewards = []
 
@@ -25,9 +26,18 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
                 break
 
         G = 0
+        visited = set()
+
         for t in range(len(states) - 1, -1, -1):
             G = rewards[t] + gamma * G
+
             state = states[t]
+
+            if state in visited:
+                continue
+
+            visited.add(state)
+
             V[state] += alpha * (G - V[state])
 
     return V
