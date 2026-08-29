@@ -21,13 +21,20 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
             if terminated or truncated:
                 break
 
-        G = 0
+        visited = set()
 
-        for i in range(len(episode) - 1, -1, -1):
-            state, reward = episode[i]
-            G = reward + gamma * G
+        for t in range(len(episode)):
+            state = episode[t][0]
 
-            if state not in [x[0] for x in episode[:i]]:
-                V[state] += alpha * (G - V[state])
+            if state in visited:
+                continue
+
+            visited.add(state)
+
+            G = 0
+            for k in range(t, len(episode)):
+                G += (gamma ** (k - t)) * episode[k][1]
+
+            V[state] += alpha * (G - V[state])
 
     return V
