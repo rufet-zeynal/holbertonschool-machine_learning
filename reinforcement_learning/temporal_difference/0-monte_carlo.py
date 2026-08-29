@@ -1,26 +1,34 @@
+#!/usr/bin/env python3
+"""Monte Carlo algorithm."""
+
 import numpy as np
 
 
-def value_iteration(env, gamma=0.9, theta=1e-5):
-    """Performs value iteration on a given Gym/Farama environment."""
-    V = np.zeros(env.observation_space.n)
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
+                alpha=0.1, gamma=0.99):
+    """Perform the Monte Carlo algorithm."""
+    for _ in range(episodes):
+        state, _ = env.reset()
+        episode = []
 
-    while True:
-        delta = 0
-        for s in range(env.observation_space.n):
-            v = V[s]
-            action_values = []
+        for _ in range(max_steps):
+            action = policy(state)
+            next_state, reward, terminated, truncated, _ = env.step(action)
 
-            for a in env.P[s]:
-                v_a = 0
-                for prob, next_state, reward, done in env.P[s][a]:
-                    v_a += prob * (reward + gamma * V[next_state])
-                action_values.append(v_a)
+            episode.append((state, reward))
+            state = next_state
 
-            V[s] = max(action_values) if action_values else 0
-            delta = max(delta, abs(v - V[s]))
+            if terminated or truncated:
+                break
 
-        if delta < theta:
-            break
+        G = 0
+        visited = set()
+
+        for state, reward in reversed(episode):
+            G = reward + gamma * G
+
+            if state not in visited:
+                visited.add(state)
+                V[state] += alpha * (G - V[state])
 
     return V
