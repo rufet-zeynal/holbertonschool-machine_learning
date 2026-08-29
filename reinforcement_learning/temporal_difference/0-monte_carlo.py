@@ -14,7 +14,6 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1,
     alpha: learning rate
     gamma: discount rate
 
-    Returns: V, the updated value estimate
     """
     for ep in range(episodes):
         state, _ = env.reset()
