@@ -13,12 +13,12 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
 
         for _ in range(max_steps):
             action = policy(state)
-            next_state, reward, terminated, truncated, _ = env.step(action)
+            next_state, reward, done, truncated, _ = env.step(action)
 
             episode.append((state, reward))
             state = next_state
 
-            if terminated or truncated:
+            if done:
                 break
 
         G = 0
